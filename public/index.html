@@ -8,7 +8,7 @@
   <meta name="robots" content="noindex, nofollow">
   <title>Royal Palace — банкетный ресторан в Астане</title>
   <link rel="icon" href="/assets/royal-palace-logo-original.jpg" type="image/jpeg">
-  <link rel="preload" as="image" href="/assets/venue-hero.webp" fetchpriority="high">
+  <link rel="preload" as="image" href="/assets/venue-hero-2k.webp" imagesrcset="/assets/venue-hero-1280.webp 1280w, /assets/venue-hero-2k.webp 2560w" imagesizes="(max-width: 760px) 1000px, 100vw" fetchpriority="high">
   <link rel="preload" as="font" href="/assets/fonts/forum-cyrillic.woff2" type="font/woff2" crossorigin>
   <link rel="preload" as="font" href="/assets/fonts/forum-latin.woff2" type="font/woff2" crossorigin>
   <link rel="preload" as="font" href="/assets/fonts/golos-text-cyrillic.woff2" type="font/woff2" crossorigin>
@@ -17,7 +17,7 @@
   <script type="module" src="/app.js"></script>
   <script type="module" src="/motion.mjs"></script>
 </head>
-<body>
+<body id="top">
   <svg class="svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <defs>
       <!-- Preserve the original mark: key out its green background without fading its artwork. -->
@@ -36,7 +36,7 @@
   </svg>
   <a class="skip-link" href="#main">Перейти к содержимому</a>
   <header class="site-header" id="header">
-    <a href="#home" class="brand" aria-label="Royal Palace — главная">
+    <a href="#top" class="brand" aria-label="Royal Palace — главная">
       <img class="brand-logo" src="/assets/royal-palace-logo-original.jpg" width="100" height="100" alt="Оригинальный логотип Royal Palace, Астана">
       <span class="brand-type">ROYAL PALACE</span>
     </a>
@@ -52,7 +52,7 @@
   <nav id="fallback-nav" class="fallback-nav" aria-label="Навигация по странице"><a href="#halls">Залы</a><a href="#gallery">Фото</a><a href="#menu">Меню</a><a href="#enquiry-form">Обсудить праздник</a><a href="#contacts">Контакты</a></nav>
   <main id="main">
     <section class="hero" id="home" aria-labelledby="hero-title">
-      <img class="hero-image" src="/assets/venue-hero.webp" alt="Основной, самый большой зал Royal Palace в Астане" width="1440" height="960" fetchpriority="high">
+      <img class="hero-image" src="/assets/venue-hero-2k.webp" srcset="/assets/venue-hero-1280.webp 1280w, /assets/venue-hero-2k.webp 2560w" sizes="(max-width: 760px) 1000px, 100vw" alt="Основной, самый большой зал Royal Palace в Астане" width="2560" height="1707" fetchpriority="high">
       <div class="hero-shade" aria-hidden="true"></div>
       <div class="hero-content container">
           <h1 id="hero-title">Банкетный ресторан<br>в <em>Астане</em></h1>
@@ -71,7 +71,7 @@
         <div class="halls-intro"><h2 id="halls-title">Выберите <br>подходящий зал</h2><a href="#enquiry-form" class="text-link" data-hall="help" data-enquiry-topic="hall">Помогите подобрать зал</a></div>
         <div class="hall-list">
           <article class="hall-option hall-featured">
-            <a class="hall-photo" href="/assets/venue-hero.jpg" data-gallery="3" target="_blank" rel="noopener noreferrer" aria-label="Посмотреть фото основного зала"><img src="/assets/venue-hero.webp" alt="Основной зал Royal Palace с праздничной сервировкой" width="1440" height="960" loading="lazy"><span class="photo-fallback" hidden>Фото не загрузилось. Нажмите, чтобы попробовать ещё раз.</span><span class="gallery-label">Посмотреть фото <svg class="icon" aria-hidden="true"><use href="#i-zoom"/></svg></span></a>
+            <a class="hall-photo" href="/assets/venue-hero.jpg" data-gallery="3" target="_blank" rel="noopener noreferrer" aria-label="Посмотреть фото основного зала"><img src="/assets/venue-hero-2k.webp" srcset="/assets/venue-hero-1280.webp 1280w, /assets/venue-hero-2k.webp 2560w" sizes="(max-width: 760px) 1000px, 100vw" alt="Основной зал Royal Palace с праздничной сервировкой" width="2560" height="1707" loading="lazy"><span class="photo-fallback" hidden>Фото не загрузилось. Нажмите, чтобы попробовать ещё раз.</span><span class="gallery-label">Посмотреть фото <svg class="icon" aria-hidden="true"><use href="#i-zoom"/></svg></span></a>
             <div class="hall-featured-copy">
               <div class="hall-card-head"><h3 class="hall-name">Основной зал<small>Самый просторный</small></h3><p class="hall-capacity"><strong>до 550</strong><span>мест</span></p></div>
               <a class="text-link hall-action" href="#enquiry-form" data-hall="main" data-enquiry-topic="guests">Обсудить рассадку <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
@@ -167,7 +167,7 @@
       </div>
     </section>
   </main>
-  <footer class="site-footer"><div class="container footer-inner"><span>ROYAL PALACE · АСТАНА</span><p>Демонстрационная версия сайта.</p><a href="#home">Наверх <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a></div></footer>
+  <footer class="site-footer"><div class="container footer-inner"><span>ROYAL PALACE · АСТАНА</span><p>Демонстрационная версия сайта.</p><a href="#top">Наверх <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a></div></footer>
   <a class="mobile-enquire" href="#enquiry-form" aria-hidden="true" tabindex="-1">Обсудить праздник <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
 
   <dialog id="message-dialog" class="message-dialog" aria-labelledby="message-title" aria-describedby="message-help">

@@ -48,10 +48,6 @@ window.matchMedia('(min-width: 761px)').addEventListener('change', event => {
     if (restoreFocus) ($$('.desktop-nav a').find(link => link.getAttribute('href') === href) || $('.desktop-nav a')).focus({ preventScroll: true });
   } else if (active.closest('.desktop-nav')) menuToggle.focus({ preventScroll: true });
 });
-const updateHeader = () => header.classList.toggle('is-scrolled', window.scrollY > 40);
-window.addEventListener('scroll', updateHeader, { passive: true });
-updateHeader();
-
 function clearFieldError(name) {
   $(`#${name}`)?.removeAttribute('aria-invalid');
   const error = $(`#${name}-error`);
@@ -219,7 +215,11 @@ function renderGallery(index, retry = false) {
     $('#gallery-image-status').hidden = true;
     $('#gallery-zoom').disabled = false;
     $$(`[data-gallery="${galleryIndex}"] img`).forEach(thumbnail => {
-      if (thumbnail.parentElement.classList.contains('photo-unavailable')) thumbnail.src = galleryImage.src;
+      if (thumbnail.parentElement.classList.contains('photo-unavailable')) {
+        thumbnail.removeAttribute('srcset');
+        thumbnail.removeAttribute('sizes');
+        thumbnail.src = galleryImage.src;
+      }
     });
   };
   galleryImage.onerror = () => {

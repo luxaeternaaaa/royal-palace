@@ -1,5 +1,21 @@
 # Royal Palace demo: image and contact sources
 
+## Latest hero delivery — 21 October 2026
+
+The user requested a smaller, non-sticky header and a clearer, slightly leveled2K hero. The exact original CDN was fetched again:1440×960,542934 bytes, SHA256 `1d64c3b99a79b327cfefa0f66d02514ffee6ca852a3edf862a76c591bf19df3d`. It is byte-identical to `public/assets/venue-hero.jpg`. The historical2500×1667 metadata did not provide an accessible larger original in the bounded check.
+
+The shipped derivatives are based entirely on that unchanged source. Processing:0.6° clockwise rotation; centered1416×944 crop from the1450×975 rotated buffer (left17/top15) to avoid empty corners; Lanczos3 resampling; gentle sharpening (sigma0.5,m1=0.4,m2=1); WebP quality90. The2GIS watermark, screen lettering, furniture and real architecture remain visible; no people or objects were generated or removed.
+
+| Current resource | Pixels | Bytes |
+| --- | --- | --- |
+| `public/assets/venue-hero-2k.webp` |2560×1707|518130|
+| `public/assets/venue-hero-1280.webp` |1280×853|249268|
+
+The hero and main-hall card share matching native srcset/sizes, with a matching responsive preload. The mobile1000px slot reflects the width required by the tall hero’s cover crop; ordinary mobile screens select the lighter variant, while wide/high-density screens select2K. These are upscales/delivery derivatives, not a newly obtained optical2K photograph. The gallery and no-JS photo link still open the unchangedJPEG original. Older delivery numbers below describe the previous1440px WebP.
+
+A built-in Imagegen trial requested conservative high-resolution restoration and subtle leveling, with the exact original as its only reference and with architecture, furniture, lettering and watermark preserved. It produced a1537×1023 candidate whose LED lettering and fine decoration were redrawn. The candidate was rejected after independent comparison and is retained only in ignored research output. **No generative pixels are used in the shipped site.** Exact source checks, processing settings and the candidate decision are recorded in `output/hero-refine/source-check-manifest.json`, `final-photo-manifest.json` and `candidate-1-review.md`.
+
+
 Checked on 20 October 2026. Venue: Royal Palace banquet hall, Astana, Chingiz Aitmatov Street, 58.
 
 ## Latest selection constraint — no people
