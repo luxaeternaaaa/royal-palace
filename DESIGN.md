@@ -12,18 +12,19 @@ Relevant design workflows: Design Partner, Impeccable and Frontend Design/Premiu
 
 ## Tokens and ownership
 Canonical runtime tokens are in `public/styles.css` under `:root`.
-- Milk `--paper: #fbf8f1` — page, header and gallery dialog.
-- Warm milk `--parchment: #f2ebde` — secondary sections, enquiry and image-viewing stage.
-- Porcelain `--surface: #fffdfa` — form and controls.
-- Gold `--gold: #d8b879`; hover `--gold-hover: #ccaa66` — primary actions with dark text.
-- Antique gold `--action-ink` / `--accent-ink: #87612d` — readable links, logo rendering and button boundaries.
-- Warm ink `--ink: #332b23`; secondary ink `--muted: #716555` — reading hierarchy.
-- Divider `--line: #ded3bf`; control border `--control-border: #96805f`.
-- Focus `--focus: #765328` — visible focus on light/gold surfaces.
+- Milk `--paper: #fdfaf3` — page, header and gallery dialog.
+- Soft milk `--parchment: #f6f0e5` — ordinary secondary sections and image-viewing stage.
+- Champagne `--champagne: #eddfc6` — enquiry only, separating it from the adjacent menu/contacts.
+- Porcelain `--surface: #fffcf7` — form and controls.
+- Gold `--gold: #d1a657`; hover `--gold-hover: #dcba77` — primary actions with dark text. `--gold-sheen` is a restrained static translucent highlight/shade across the physical button surface, shared with the floating contact action; it never sweeps or animates. `--gold-light: #efd39a` is the readable headline accent on the dark photo.
+- Antique gold `--action-ink` / `--accent-ink: #7a531e` — readable links, logo rendering and button boundaries.
+- Warm ink `--ink: #2b2118`; secondary ink `--muted: #6d5b46` — reading hierarchy.
+- Divider `--line: #d2bd94`; control border `--control-border: #927341`.
+- Focus `--focus: #68451f` — visible focus on light/gold surfaces.
 - Neutral warm shade `--shade: #241f1a` — photographic overlays and modal backdrop.
 - Error `--error: #9e372c` — text and invalid outlines.
 
-Controls keep a 6px radius; panels keep12px. The primary-action class is `button-primary`; it no longer encodes green. Use the canonical tokens instead of adding a second palette. Body text and action captions require4.5:1 contrast; control boundaries and focus indicators require3:1. White text is unsuitable on the gold buttons. Hero/photo captions remain light only on their dark photographic scrims.
+Controls keep a 6px radius; panels keep 12px. The featured hall uses a slightly clearer existing gold border; capacity figures use the readable gold accent. Richness comes from clean ivory, a distinct champagne section and deeper ink/gold, without new decorative blocks or changes to photographs. The primary-action class is `button-primary`; it no longer encodes green. Use the canonical tokens instead of adding a second palette. Body text and action captions require4.5:1 contrast; control boundaries and focus indicators require3:1. White text is unsuitable on the gold buttons. Hero/photo captions remain light only on their dark photographic scrims.
 
 Typography: Forum 400 gives headings, hall names, FAQ headings, form/dialog titles and the typographic venue name their character. It is the main headline family observed on Le Dome. Golos Text 400–700 owns paragraphs, helper text, numeric capacities, phone numbers, labels, buttons and inputs for comfortable reading. Both are self-hosted Cyrillic/Cyrillic-ext and Latin/Latin-ext WOFF2 with Georgia and Arial fallbacks. Forum has no italic face; the hero's Astana emphasis stays upright in champagne rather than synthesizing an italic. Useful explanatory text is at least 14px, button text at least 15px, and input text at least 16px. Native date/select popups intentionally follow the operating system for reliable touch and keyboard use. The original logo artwork is unchanged. Provenance and licenses: docs/asset-sources.md.
 
