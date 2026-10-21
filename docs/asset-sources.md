@@ -1,6 +1,14 @@
 # Royal Palace demo: image and contact sources
 
-## Latest hero delivery — 21 October 2026
+## Current hero: user's selected restored image — 21 October 2026
+
+The user attached the previously shown brighter/sharper candidate and explicitly asked for that exact image as the main-page background. The earlier site had retained the ordinary source-faithful upscale; this was a different image-processing choice, not a reproduced cache failure. The user's latest selection supersedes the earlier candidate rejection below.
+
+`public/assets/venue-hero-restored-2k.webp` is a byte-for-byte copy of the previously generated `output/hero-refine/venue-hero-enhanced-2k.webp`:2560×1704,782958bytes, SHA256 `c5d3a365c3ced27d3226ad70138851487284647ab68b367525b1b9299070446a`. It is based on the genuine Royal Palace main-hall photograph, processed earlier with built-in Imagegen and proportionally packaged for delivery. The mobile derivative `venue-hero-restored-1280.webp` is1280×852,284546bytes. No new generation, retouch or source search was performed in this replacement pass. The full selected image was inspected again; no people were observed.
+
+This is an **AI-restored/upscaled photograph**, not a new high-resolution original. Fine decorations and lettering were reconstructed and differ from the source. Hero, main-hall thumbnail and responsive preload use the same new filenames/srcset, making the selected delivery explicit. The untouched1440×960 `venue-hero.jpg` and all gallery/no-JS original links remain available. Other venue photographs remain ordinary derivatives of genuine originals.
+
+## Previous hero delivery — superseded by the user's image selection
 
 The user requested a smaller, non-sticky header and a clearer, slightly leveled2K hero. The exact original CDN was fetched again:1440×960,542934 bytes, SHA256 `1d64c3b99a79b327cfefa0f66d02514ffee6ca852a3edf862a76c591bf19df3d`. It is byte-identical to `public/assets/venue-hero.jpg`. The historical2500×1667 metadata did not provide an accessible larger original in the bounded check.
 
