@@ -218,8 +218,9 @@ function renderGallery(index, retry = false) {
     galleryImage.hidden = false;
     $('#gallery-image-status').hidden = true;
     $('#gallery-zoom').disabled = false;
-    const thumbnail = $(`.gallery-item[data-gallery="${galleryIndex}"] img`);
-    if (thumbnail?.parentElement.classList.contains('photo-unavailable')) thumbnail.src = galleryImage.src;
+    $$(`[data-gallery="${galleryIndex}"] img`).forEach(thumbnail => {
+      if (thumbnail.parentElement.classList.contains('photo-unavailable')) thumbnail.src = galleryImage.src;
+    });
   };
   galleryImage.onerror = () => {
     galleryImage.hidden = true;
@@ -246,7 +247,7 @@ $('#gallery-dialog').addEventListener('keydown', event => {
   if (event.key === 'ArrowRight') { event.preventDefault(); renderGallery(galleryIndex + 1); }
   if (event.key === 'ArrowLeft') { event.preventDefault(); renderGallery(galleryIndex - 1); }
 });
-$$('.gallery-item img').forEach(img => {
+$$('.gallery-item img, .hall-photo img').forEach(img => {
   const showFailure = () => { img.parentElement.classList.add('photo-unavailable'); img.parentElement.querySelector('.photo-fallback').hidden = false; };
   img.addEventListener('load', () => {
     img.parentElement.classList.remove('photo-unavailable');
