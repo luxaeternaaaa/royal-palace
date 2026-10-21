@@ -30,7 +30,7 @@ function initReveals() {
 
   const targets = document.querySelectorAll([
     '.halls-intro', '.hall-option', '.section-heading', '.gallery-item',
-    '.menu-heading', '.menu-copy', '#planning h2', '.planning-steps > li',
+    '.menu-heading', '.menu-copy',
     '.enquiry-copy', '.faq-grid > div', '.contact-copy', '.contact-photo',
   ].join(', '));
   for (const target of targets) {

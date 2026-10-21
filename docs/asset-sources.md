@@ -26,7 +26,31 @@ Before the user's explicit correction, the initial update recorded main 550, med
 - Independently, the [Restoran.kz venue listing](https://astana.restoran.kz/banquet/98605-royal-palace) links directly to `https://wa.me/77715790555?text=...` in its WhatsApp contact action. Its prefilled message identifies Restoran.kz, so this demo uses the same destination without that source-specific text.
 - No message was sent and no call was placed.
 
-## Downloaded photographs
+## Current photo/video curation — 21 October 2026
+
+The user's exact [2GIS gallery](https://2gis.kz/astana/gallery/firm/70000001081186323/photoId/adsImage) was opened in the in-app browser. It lists 228 materials, including 28 videos; the owner album contains 6 photos and 1 video. The isolated browser received a CAPTCHA; the regular in-app session opened normally. No CAPTCHA was bypassed. The bounded selection compared the owner album and one guest alternative; it did not claim to watch all 28 videos.
+
+**New selected image:** `public/assets/venue-room.jpg`, **1440×2160**,941204 bytes, photo ID **30258560211255314**, label“Фотография от владельца”, dated 13 December 2024. [Source photo page](https://2gis.kz/astana/gallery/firm/70000001081186323/photoId/30258560211255314); [observed CDN original](https://i0.photo.2gis.com/photo-gallery/def4a401-5d9b-43c8-80a8-4b04d8282af6.jpg). It shows a round table, white/gold chairs and the architectural interior without people. It replaces the repetitive close floral view `venue-detail.jpg` (old photo ID 30258560319715456), which is no longer shipped in `public/`. The previous image remains in Git history and the local research evidence.
+
+The current hero, decorated-table portrait, stage view and façade remain genuine owner images from the initial table below. The hero is still the user's confirmed main hall. Stage captions now say“Сцена и оформление”; the new photograph says“Интерьер и рассадка”. Neither new nor existing unlabelled-room photographs are assigned to орта/кіші. A guest aisle view (photo30258560242324782) was inspected but rejected for the site because it is darker, lower-resolution and includes a foreground head.
+
+**Video:** [owner's 14-second video in 2GIS](https://2gis.kz/astana/gallery/firm/70000001081186323/photoId/30258560336546977), label“Видео от владельца”, dated 6 September 2026, 608×1080. The observed player uses DASH/MediaSource rather than a stable standalone MP4. The site offers an ordinary explicit link to that exact material. No video is downloaded, embedded, preloaded or played by the page.
+
+**Delivery derivatives:** originals remain unchanged JPEGs for explicit gallery viewing. The five page-image resources are encoded from those originals as WebP at quality 84, without crop, retouch, sharpening, generative fill or an invented interior. Aspect ratios and the original watermarks remain in the files. CSS card cropping is separate from the complete original viewer.
+
+| Page resource | Pixels | Bytes |
+| --- | --- | --- |
+| `venue-hero.webp` |1440×960|248516|
+| `venue-celebration-preview.webp` |960×640|133714|
+| `venue-hall-preview.webp` |720×1080|83148|
+| `venue-room-preview.webp` |720×1080|112594|
+| `venue-exterior-preview.webp` |960×640|101238|
+
+The five default page photographs total **679210 bytes**, compared with **3220478 bytes** for the five prior JPEG page resources (**78.9% less**). This is a resource-size comparison, not a claim of an equivalent improvement to every user's load time. Full JPEGs are fetched only by explicit gallery/image viewing. The hero derivative is reused by its hall card. No new runtime dependency or external image/font request is introduced. Image generation/upscaling was unnecessary because a suitable genuine owner photograph was available.
+
+Evidence: `output/assets-research/2026-10-21-media/selected-photos.json`, `owner-video.json`, `optimized-manifest.json`, source downloads and browser captures. Rights/permission limits below still apply to a future public release.
+
+## Initial downloaded photographs (historical selection)
 
 All five files are actual photographs from this venue’s [2GIS gallery](https://2gis.kz/astana/gallery/firm/70000001081186323). Each selected image is labeled **“Фотография от владельца”** in the gallery data. The owner album was loaded in the real browser; its media response tied each image ID and CDN URL to object `70000001081186323`. The 2GIS watermark is retained.
 
@@ -52,7 +76,11 @@ The WhatsApp glyph in the inline SVG sprite is the filled 24px vector from [Simp
 
 ## Fonts
 
-Cormorant Garamond (display) and Manrope (body) are self-hosted WOFF2 files fetched from Google Fonts. Their original stylesheet is preserved with local paths in `public/assets/fonts/fonts.css`; OFL license files are saved alongside the fonts. No external font requests are needed at runtime.
+Current families: **Forum 400** for display and **Golos Text 400–700** for reading and controls, installed on 21 October 2026 at the user's request. Forum is the main headline family in [Le Dome's current stylesheet](https://static.tildacdn.pro/ws/project6141581/tilda-blocks-page35449568.min.css?t=1791890748); Lora is present there for popup/quiz headings, not its main headline role. This corrects the earlier incomplete reference notes.
+
+The eight unchanged WOFF2 subsets (Cyrillic-ext, Cyrillic, Latin-ext, Latin for each family) come from the [Google Fonts CSS API](https://fonts.googleapis.com/css2?family=Forum&family=Golos+Text:wght@400..700&display=swap), with download URLs under `fonts.gstatic.com`. They total 172,620 bytes. The stylesheet uses only local paths in `public/assets/fonts/fonts.css`; no external font requests are required at runtime. Critical Cyrillic files are preloaded. Original licenses from the official Google Fonts repository are saved as `forum-OFL.txt` and `golos-text-OFL.txt` alongside the files: [Forum source and OFL](https://github.com/google/fonts/tree/main/ofl/forum), [Golos Text source and OFL](https://github.com/google/fonts/tree/main/ofl/golostext). The original stylesheet, upstream listings and download hashes are retained in `output/fonts-research/`.
+
+Both official source TTF files were inspected with fontTools: no missing characters in the Russian/Latin samples or `ӘәҒғҚқҢңӨөҰұҮүҺһІі`. The actual rendered WOFF2 checks and limits are recorded in `docs/verification.md`. Earlier Cormorant Garamond/Manrope files were removed from the current build; they remain recoverable in Git history. The typography work does not alter the authentic logo artwork or photographic source pixels.
 
 ## Original logo and user-confirmed halls
 

@@ -184,9 +184,9 @@ $('#copy-message').addEventListener('click', async () => {
 });
 
 const gallery = [
-  { src: '/assets/venue-celebration.jpg', alt: 'Общий вид банкетного зала и сцены Royal Palace', caption: 'Общий вид зала' },
+  { src: '/assets/venue-celebration.jpg', alt: 'Сцена и оформление праздника в Royal Palace', caption: 'Сцена и оформление' },
   { src: '/assets/venue-hall.jpg', alt: 'Оформление столов в Royal Palace', caption: 'Оформление столов' },
-  { src: '/assets/venue-detail.jpg', alt: 'Цветы и детали сервировки в Royal Palace', caption: 'Детали сервировки' },
+  { src: '/assets/venue-room.jpg', alt: 'Круглый стол и бело-золотые кресла в интерьере Royal Palace', caption: 'Интерьер и рассадка' },
   { src: '/assets/venue-hero.jpg', alt: 'Основной, самый большой зал Royal Palace', caption: 'Основной зал' },
 ];
 let galleryIndex = 0;
