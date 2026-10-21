@@ -520,4 +520,3 @@ export const PAGE_COPY = {
     "gallery.countInitial": "1 / 4"
   }
 };
-
