@@ -45,8 +45,8 @@ window.matchMedia('(min-width: 761px)').addEventListener('change', event => {
     const restoreFocus = mobileNav.contains(active) || active === menuToggle;
     const href = active.getAttribute('href');
     closeMenu();
-    if (restoreFocus) ($$('.desktop-nav a, .header-cta').find(link => link.getAttribute('href') === href) || $('.desktop-nav a')).focus({ preventScroll: true });
-  } else if (active.closest('.desktop-nav') || active === $('.header-cta')) menuToggle.focus({ preventScroll: true });
+    if (restoreFocus) ($$('.desktop-nav a').find(link => link.getAttribute('href') === href) || $('.desktop-nav a')).focus({ preventScroll: true });
+  } else if (active.closest('.desktop-nav')) menuToggle.focus({ preventScroll: true });
 });
 const updateHeader = () => header.classList.toggle('is-scrolled', window.scrollY > 40);
 window.addEventListener('scroll', updateHeader, { passive: true });

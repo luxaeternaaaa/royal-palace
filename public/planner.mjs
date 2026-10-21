@@ -20,7 +20,7 @@ function validCalendarDate(value) {
 
 export function validateEnquiry(data, today = astanaToday()) {
   const errors = {};
-  if (!EVENTS.includes(data.event)) errors.event = 'Выберите формат события.';
+  if (!EVENTS.includes(data.event)) errors.event = 'Выберите событие.';
   if (data.hall && !Object.hasOwn(HALLS, data.hall)) errors.hall = 'Выберите зал из списка или «Помогите выбрать».';
   const date = String(data.date ?? '').trim();
   if (!data.dateUndecided && date) {
