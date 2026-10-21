@@ -1,0 +1,6 @@
+{
+  "profile": "marketing",
+  "sourceRoots": ["public"],
+  "ownership": { "Select/Listbox": "native", "Date": "native" },
+  "commands": { "test": "npm test", "check": "npm run check", "build": "npm run build" }
+}

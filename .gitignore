@@ -1,0 +1,8 @@
+dist/
+node_modules/
+output/
+.playwright-mcp/
+premium-audit.json
+.env
+.env.*
+!.env.example
