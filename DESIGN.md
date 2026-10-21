@@ -4,26 +4,26 @@
 Russian presentation website for families planning a celebration at Royal Palace, Astana, Chingiz Aitmatov 58. The single conversion is a prepared WhatsApp enquiry; no booking, backend, payment or automatic message sending.
 
 ## Visual direction
-A clear presentation of the actual venue: real photography, readable controls and restrained green/champagne surfaces that suit its interior. At the user's explicit request, the confirmed main-hall photograph fills the hero background again. White text and upright champagne emphasis sit over a directional dark scrim; keep the image edge to edge rather than reverting to a split photo panel. Its primary action starts with hall comparison; discussing the celebration remains directly available. Display type gives hierarchy; plain, specific headings carry the information. Short headings have no trailing full stop; body copy stays simple and welcoming. Do not recreate a logo or treat a newly designed monogram as the venue's brand. The authentic Instagram JPG stays unchanged; the header renders the original artwork in palace green with a transparent background, using the SVG filter described in `docs/logo-source.md`.
+A photographic presentation of the real Royal Palace, built around its white/gold interior. The user's latest explicit instruction replaces the earlier green/champagne palette with **milk and gold**. Milk surfaces dominate the header, page, enquiry, footer, mobile navigation and dialogs. Warm dark text carries reading; gold identifies primary actions and restrained accents. Do not restore the previous green sections or green photographic tint. Preserve the confirmed main-hall photo hero, authentic logo geometry, Forum/Golos typography, working enquiry and restrained motion. The hero keeps a neutral warm scrim for readable light text; photographs retain their actual colors. Short factual headings and useful content take priority over decorative filler.
 
-The earlier refinement used Impeccable, Design Partner, Frontend Design Premium and Awesome Design MD. The current pass is led by UI UX Pro Max, with Design Partner and Frontend Design/Premium. Verified local searches matched Restaurant/Food Service and Wedding/Event Planning. Their useful guidance is real venue photography, clear hierarchy, progressive disclosure and visible focus; generic red/pink palettes, script fonts, planning tools and testimonial carousels do not fit the established venue or available evidence and are not applied. Keep the existing self-hosted fonts and identity rather than adopting every database suggestion. The earlier Airbnb reference informs photo-first composition and readable controls only.
+The original Instagram JPG stays unchanged. Its header rendering uses the existing background-removal filter, now in legible antique gold rather than green. Do not generate or trace a substitute logo. The earlier green direction and audits remain historical evidence; the user's new milk/gold instruction has priority.
+
+Relevant design workflows: Design Partner, Impeccable and Frontend Design/Premium. Use the local reports for concrete findings and verify visual changes together on desktop/mobile. Do not apply every installed database suggestion or add unrelated components.
 
 ## Tokens and ownership
 Canonical runtime tokens are in `public/styles.css` under `:root`.
-- Palace green `#183b32` — primary actions and dark sections.
-- Deep green `#102820` — photographic overlays and dark text.
-- Champagne `#d4ba88` — reserved emphasis on dark backgrounds.
-- Accent ink `#76623f` — readable warm emphasis on paper. The photographic hero uses champagne instead.
-- Paper `#fbfaf7` — main light background.
-- Parchment `#f1eee7` — secondary surfaces.
-- Surface `#fffefa` — form and panel surfaces.
-- Ink `#253a32` — primary text on light surfaces.
-- Muted ink `#5c685f` — secondary text on light surfaces.
-- Line `#d8dcd5` — quiet section and content dividers.
-- Control border `#819188` — identifiable input boundaries.
-- Focus `#466d5b` — visible keyboard focus on light surfaces.
+- Milk `--paper: #fbf8f1` — page, header and gallery dialog.
+- Warm milk `--parchment: #f2ebde` — secondary sections, enquiry and image-viewing stage.
+- Porcelain `--surface: #fffdfa` — form and controls.
+- Gold `--gold: #d8b879`; hover `--gold-hover: #ccaa66` — primary actions with dark text.
+- Antique gold `--action-ink` / `--accent-ink: #87612d` — readable links, logo rendering and button boundaries.
+- Warm ink `--ink: #332b23`; secondary ink `--muted: #716555` — reading hierarchy.
+- Divider `--line: #ded3bf`; control border `--control-border: #96805f`.
+- Focus `--focus: #765328` — visible focus on light/gold surfaces.
+- Neutral warm shade `--shade: #241f1a` — photographic overlays and modal backdrop.
+- Error `--error: #9e372c` — text and invalid outlines.
 
-Palace green, deep green and champagne remain unchanged. Controls use a 6px radius; panels use 12px. Keep these values in the canonical runtime token source rather than duplicating a separate theme.
+Controls keep a 6px radius; panels keep12px. The primary-action class is `button-primary`; it no longer encodes green. Use the canonical tokens instead of adding a second palette. Body text and action captions require4.5:1 contrast; control boundaries and focus indicators require3:1. White text is unsuitable on the gold buttons. Hero/photo captions remain light only on their dark photographic scrims.
 
 Typography: Forum 400 gives headings, hall names, FAQ headings, form/dialog titles and the typographic venue name their character. It is the main headline family observed on Le Dome. Golos Text 400–700 owns paragraphs, helper text, numeric capacities, phone numbers, labels, buttons and inputs for comfortable reading. Both are self-hosted Cyrillic/Cyrillic-ext and Latin/Latin-ext WOFF2 with Georgia and Arial fallbacks. Forum has no italic face; the hero's Astana emphasis stays upright in champagne rather than synthesizing an italic. Useful explanatory text is at least 14px, button text at least 15px, and input text at least 16px. Native date/select popups intentionally follow the operating system for reliable touch and keyboard use. The original logo artwork is unchanged. Provenance and licenses: docs/asset-sources.md.
 
@@ -32,7 +32,7 @@ Clear hero → three hall cards → real-photo gallery → concise pending-menu 
 
 ### Hall, media and content refinement
 
-The Le Dome reference informs photo-led presentation, fine dividers and Forum display type. Royal Palace keeps its authentic logo, green/champagne palette and confirmed main-hall hero. The main hall combines its photograph, 550-seat capacity and seating enquiry; medium and small remain compact, without borrowing another hall's photo. Empty hall disclosures and the repeated preparation section were removed after independent review. Confirmed capacities also appear in the optional hall selector.
+The Le Dome reference informs photo-led presentation, fine dividers and Forum display type. Royal Palace keeps its authentic logo and confirmed main-hall hero, using the user's milk/gold palette. The main hall combines its photograph, 550-seat capacity and seating enquiry; medium and small remain compact, without borrowing another hall's photo. Empty hall disclosures and the repeated preparation section were removed after independent review. Confirmed capacities also appear in the optional hall selector.
 
 The gallery shows a stage setup, decorated tables and a different white/gold table/interior view from the actual 2GIS owner album. Captions identify the visible subject; unknown photographs are never assigned to the medium or small hall. Page images use local WebP derivatives; explicit gallery viewing and no-JS links open the retained JPEG originals. No source photograph was generated or architecturally changed. Gallery shading is restricted to its bottom 35% to retain image detail. Video opens the verified owner material in 2GIS on an explicit click, without an embedded player, autoplay or background requests.
 
@@ -41,11 +41,13 @@ Until an approved menu exists, the menu section says it will be added after agre
 ## Failure and keyboard contracts
 Keep landing copy specific and brief: the hall introduction explains which photos are available, the menu block makes one request, and the form explains WhatsApp preparation without repeating reassurance across columns. The optional disclosure is labelled «Дополнительные детали», which remains accurate after the user has entered and collapsed a draft. FAQ uses the direct heading «Вопросы о банкете». Across the mobile/desktop breakpoint, transfer focus from disappearing navigation to its visible equivalent; retain ordinary focus outside navigation.
 
-Keep the recognised WhatsApp SVG filled, with no inherited outline. Hero height must grow with user text spacing; its normal photograph and composition stay intact. Mobile scroll padding reserves space above and below focused actions for the header and floating contact button. Dark mobile navigation uses champagne focus outlines.
+Keep the recognised WhatsApp SVG filled, with no inherited outline. Hero height must grow with user text spacing; its normal photograph and composition stay intact. Mobile scroll padding reserves space above and below focused actions for the header and floating contact button. Milk mobile navigation uses the dark gold focus outline.
 
 Gallery zoom is exactly twice the fitted image size, including portraits. Zoom moves focus to the pan area; resize returns the whole photo. A successful retry restores its failed thumbnail, and a hidden modal must not initialise an image request. Photo cards remain native image links without JavaScript. Mobile HTML navigation and a direct-contact explanation are present until successful app initialisation; inactive floating controls cannot receive focus. Copy feedback belongs only to the currently open preview, never an older asynchronous operation. Preserve keyboard focus after copying. Detailed findings and evidence: `.design/critical-review-report.md`.
 
 ## Content contract
+**Photographs must show no people**, including background guests/staff, reflections and partial bodies. This applies to existing photos, Instagram/2GIS candidates and video stills. Reject frames with people rather than removing them through generation or hiding them only in a card crop. Check the entire original before selection. Prefer actual empty interiors, architecture, table settings and façade photographs. Never substitute another venue.
+
 Verified: venue name, Astana, address, Instagram, public WhatsApp link. The working-at-venue user confirmed three halls: Main/Основной (largest), орта/medium, кіші/small, and identified the hero photo as the main hall. The user's latest correction on 21 October 2026 establishes 550 seats in the main hall and 144 in the medium hall; 144 was initially assigned to the small hall by mistake, which the user explicitly corrected. This latest first-party correction takes priority over the earlier misstatement and the older Instagram figures of 500/main and 140/medium. Small-hall capacity is unconfirmed: show it as available on request and do not assign 144 to it. Keep the seating-layout qualification. The original profile capture and dated audit reports remain historical evidence, not a reason to overwrite this correction. Prices, equipment and additional services remain unverified. Other photos are not assigned to medium or small halls. The authentic logo is tied to this address via 2GIS → Instagram. Current menus, prices and availability remain administrator questions; the site gives a short request without an event questionnaire. Sources: `docs/asset-sources.md` and `docs/logo-source.md`. Demo status is disclosed unobtrusively in the footer.
 
 ## Motion

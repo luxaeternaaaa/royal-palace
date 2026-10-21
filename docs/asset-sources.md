@@ -2,6 +2,16 @@
 
 Checked on 20 October 2026. Venue: Royal Palace banquet hall, Astana, Chingiz Aitmatov Street, 58.
 
+## Latest selection constraint — no people
+
+The user explicitly requires photographs without people, including background people, partial bodies and reflections. On 21 October 2026 the five currently shipped originals (`venue-hero.jpg`, `venue-celebration.jpg`, `venue-hall.jpg`, `venue-room.jpg`, `venue-exterior.jpg`) were opened in full and visually inspected; no people were observed. Selection checks the complete JPEG, not just the CSS crop. Do not use generative removal to make an otherwise unsuitable event photograph pass this constraint.
+
+A further bounded search examined the official Instagram's first 12 publications and exact-venue map material. No additional photograph met the full selection bar. The official [small-hall reel](https://www.instagram.com/royal.palace.astana/reel/DY4s1aotoHm/) cover has no observed people but contains a large subtitle and blurred foreground; it is rejected as a website photo. The [medium-hall reel](https://www.instagram.com/royal.palace.astana/reel/DYy1C6MNcdY/) cover includes people and subtitles, so it is rejected. Two additional exact-venue map photos also show people and are not copied to `public/`. These research candidates remain only under ignored `output/assets-research/2026-10-21-extra/`, with exact observed source links and decisions in the manifests.
+
+The small-hall reel publicly mentions 60 guests. This is source evidence to confirm with the team, not a change to the current unconfirmed small-hall capacity. The medium reel's 140 does not override the user's latest 144. The two smaller halls still require approved identifiable photographs without people. Current delivered photographs are genuine owner originals with local delivery derivatives; no generated scene, person removal or replacement from another venue is used.
+
+The alternate white/gold 128px 2GIS emblem was retained only as a reference: its geometry differs from the current Instagram logo. No larger matching current logo was obtained. The header continues to render the original artwork through the existing filter, in the user's new antique-gold accent. The favicon remains the authentic unchanged source JPG.
+
 ## Latest capacity correction — 21 October 2026
 
 The user, who works at Royal Palace, clarified that **144 seats refers to the medium/орта hall, not the small/кіші hall**. The current confirmed figures are **550 seats in the main hall** and **144 in the medium hall**. The small hall's capacity remains unconfirmed. This latest correction supersedes both the user's earlier mistaken assignment of 144 to the small hall and the older public-profile figures of 500/main and 140/medium.
