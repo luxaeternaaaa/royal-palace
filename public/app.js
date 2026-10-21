@@ -1,14 +1,31 @@
-import { astanaToday, validateEnquiry, composeMessage, composeQuickMessage, whatsappUrl, ENQUIRY_TOPICS, EVENTS } from './planner.mjs';
-import { COST_HELP, COST_PRIORITIES, validateCostStep, estimateBudget, composeCostMessage } from './cost.mjs';
+import { astanaToday, validateEnquiry, composeMessage, composeQuickMessage, whatsappUrl, getPlannerCopy } from './planner.mjs';
+import { validateCostStep, estimateBudget, composeCostMessage, getCostCopy } from './cost.mjs';
+import { LANGUAGES, normalizeLocale, numberFormatter, formatDate, preferredLocale } from './i18n.mjs';
+import { PAGE_COPY } from './page-locales.mjs';
+import { UI_COPY } from './ui-locales.mjs';
 
 const $ = selector => document.querySelector(selector);
 const $$ = selector => [...document.querySelectorAll(selector)];
+let savedLocale;
+try { savedLocale = localStorage.getItem('royal-palace-language'); } catch { /* Storage can be disabled. */ }
+let locale = preferredLocale(location.search, savedLocale);
+const t = (key, values = {}) => UI_COPY[locale][key].replace(/\{(\w+)\}/g, (_, name) => values[name] ?? '');
 const form = $('#enquiry-form');
 const formDetails = $('#form-details');
 const dateField = $('#date');
 const header = $('#header');
 const menuToggle = $('.menu-toggle');
 const mobileNav = $('#mobile-nav');
+const languageSelect = document.createElement('select');
+languageSelect.id = 'language-select';
+languageSelect.className = 'language-select';
+Object.entries(LANGUAGES).forEach(([value, name]) => {
+  const option = document.createElement('option');
+  option.value = value; option.textContent = { ru: 'RU', kk: 'ҚАЗ', en: 'EN' }[value];
+  option.lang = value; option.title = name;
+  languageSelect.append(option);
+});
+header.insertBefore(languageSelect, menuToggle);
 let focusedHeaderControl = null;
 const topics = new Set();
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -16,14 +33,14 @@ dateField.min = astanaToday();
 
 function closeMenu() {
   menuToggle.setAttribute('aria-expanded', 'false');
-  menuToggle.setAttribute('aria-label', 'Открыть меню');
+  menuToggle.setAttribute('aria-label', t('menuOpen'));
   mobileNav.hidden = true;
   header.classList.remove('menu-open');
 }
 menuToggle.addEventListener('click', () => {
   const open = menuToggle.getAttribute('aria-expanded') !== 'true';
   menuToggle.setAttribute('aria-expanded', String(open));
-  menuToggle.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
+  menuToggle.setAttribute('aria-label', t(open ? 'menuClose' : 'menuOpen'));
   mobileNav.hidden = !open;
   header.classList.toggle('menu-open', open);
 });
@@ -66,7 +83,7 @@ $$('[data-hall]').forEach(link => link.addEventListener('click', () => {
 }));
 function renderTopics() {
   $('#enquiry-context').hidden = topics.size === 0;
-  $('#enquiry-question-text').textContent = topics.size ? `В сообщение добавим: ${[...topics].map(topic => ENQUIRY_TOPICS[topic]).join(' ')}` : '';
+  $('#enquiry-question-text').textContent = topics.size ? t('topicsAdded', { topics: [...topics].map(topic => getPlannerCopy(locale).topics[topic]).join(' ') }) : '';
 }
 $$('[data-enquiry-topic]').forEach(link => link.addEventListener('click', () => {
   topics.add(link.dataset.enquiryTopic);
@@ -83,6 +100,7 @@ const dialogOpeners = new WeakMap();
 let previewOrigin = 'form';
 let editEnquiryOnClose = false;
 let messageVersion = 0;
+let messageFactory = null;
 function openDialog(dialog, opener) {
   closeMenu();
   dialogOpeners.set(dialog, opener);
@@ -111,25 +129,29 @@ $$('dialog').forEach(dialog => {
     if (opener?.isConnected) opener.focus({ preventScroll: true });
   });
 });
-function showMessage(message, opener, origin = 'form') {
+function renderMessage() {
   messageVersion++;
-  previewOrigin = origin;
-  editEnquiryOnClose = false;
+  const message = messageFactory();
   $('#message-preview').textContent = message;
   $('#whatsapp-send').href = whatsappUrl(message);
   $('#copy-status').textContent = '';
-  $('#copy-message').textContent = 'Скопировать текст';
+  $('#copy-message').textContent = t('copy');
   $('#copy-message').disabled = false;
-  $('.edit-message').textContent = origin === 'cost' ? 'Вернуться к расчёту' : origin === 'quick' ? 'Вернуться на сайт' : 'Изменить детали';
+  $('.edit-message').textContent = t(previewOrigin === 'cost' ? 'editCost' : previewOrigin === 'quick' ? 'editQuick' : 'editForm');
+}
+function showMessage(createMessage, opener, origin = 'form') {
+  messageFactory = createMessage;
+  previewOrigin = origin;
+  editEnquiryOnClose = false;
+  renderMessage();
   openDialog(messageDialog, opener);
 }
 $('.edit-message').addEventListener('click', () => { editEnquiryOnClose = previewOrigin === 'form'; });
 $$('[data-quick-topic]').forEach(link => {
-  const message = composeQuickMessage(link.dataset.quickTopic, link.dataset.quickHall);
-  link.href = whatsappUrl(message);
+  link.href = whatsappUrl(composeQuickMessage(link.dataset.quickTopic, link.dataset.quickHall, locale));
   link.addEventListener('click', event => {
     event.preventDefault();
-    showMessage(message, link, 'quick');
+    showMessage(() => composeQuickMessage(link.dataset.quickTopic, link.dataset.quickHall, locale), link, 'quick');
   });
 });
 form.addEventListener('submit', event => {
@@ -137,20 +159,20 @@ form.addEventListener('submit', event => {
   dateField.min = astanaToday();
   const data = { event: $('#event').value, hall: $('#hall').value, date: dateField.value, guests: $('#guests').value, wishes: $('#wishes').value, topics: [...topics] };
   ['event', 'hall', 'date', 'guests', 'wishes'].forEach(clearFieldError);
-  const errors = validateEnquiry(data);
-  if (dateField.validity.badInput) errors.date = 'Проверьте дату: выберите её в календаре.';
-  if ($('#guests').validity.badInput) errors.guests = 'Укажите число гостей цифрами, например 120.';
+  const errors = validateEnquiry(data, undefined, locale);
+  if (dateField.validity.badInput) errors.date = t('badDate');
+  if ($('#guests').validity.badInput) errors.guests = t('badGuests');
   if (Object.keys(errors).length) {
     if (Object.keys(errors).some(name => formDetails.contains($(`#${name}`)))) formDetails.open = true;
     Object.entries(errors).forEach(([name, text]) => { $(`#${name}`).setAttribute('aria-invalid', 'true'); $(`#${name}-error`).textContent = text; });
-    $('#form-status').textContent = 'Проверьте отмеченные поля.';
+    $('#form-status').textContent = t('checkFields');
     const first = $(`#${Object.keys(errors)[0]}`);
     first.focus({ preventScroll: true });
     first.scrollIntoView({ block: 'center', behavior: reducedMotion() ? 'instant' : 'smooth' });
     return;
   }
   $('#form-status').textContent = '';
-  showMessage(composeMessage(data), form.querySelector('[type=submit]'));
+  showMessage(() => composeMessage(data, locale), form.querySelector('[type=submit]'));
 });
 $('#copy-message').addEventListener('click', async () => {
   const message = $('#message-preview').textContent;
@@ -159,20 +181,20 @@ $('#copy-message').addEventListener('click', async () => {
   const button = $('#copy-message');
   const hadFocus = document.activeElement === button;
   button.disabled = true;
-  button.textContent = 'Копируем…';
+  button.textContent = t('copying');
   try {
     await navigator.clipboard.writeText(message);
     if (!isCurrent()) return;
-    button.textContent = 'Текст скопирован';
-    $('#copy-status').textContent = 'Можно вставить его в переписку с администратором.';
+    button.textContent = t('copied');
+    $('#copy-status').textContent = t('copySuccess');
   } catch {
     if (!isCurrent()) return;
-    button.textContent = 'Скопировать текст';
+    button.textContent = t('copy');
     const preview = $('#message-preview');
     const range = document.createRange(); range.selectNodeContents(preview);
     const selection = window.getSelection(); selection.removeAllRanges(); selection.addRange(range);
     preview.focus();
-    $('#copy-status').textContent = 'Автоматическое копирование недоступно. Скопируйте выделенный текст вручную.';
+    $('#copy-status').textContent = t('copyFallback');
   } finally {
     if (isCurrent()) {
       button.disabled = false;
@@ -185,7 +207,7 @@ const costDialog = $('#cost-dialog');
 const costForm = $('#cost-form');
 const costSteps = $$('[data-cost-step]');
 const costFields = ['event', 'date', 'guests', 'budget', 'help', 'priorities'];
-const costNumber = new Intl.NumberFormat('ru-RU');
+let costNumber = numberFormatter(locale);
 let costStep = 0;
 
 function addCostChoices(container, name, choices, type = 'radio') {
@@ -199,9 +221,9 @@ function addCostChoices(container, name, choices, type = 'radio') {
     label.append(input, text); container.append(label);
   });
 }
-addCostChoices($('#cost-events'), 'event', Object.fromEntries(EVENTS.map(event => [event, event])));
-addCostChoices($('#cost-help'), 'help', COST_HELP);
-addCostChoices($('#cost-priorities'), 'priorities', COST_PRIORITIES, 'checkbox');
+addCostChoices($('#cost-events'), 'event', getPlannerCopy(locale).events);
+addCostChoices($('#cost-help'), 'help', getCostCopy(locale).help);
+addCostChoices($('#cost-priorities'), 'priorities', getCostCopy(locale).priorities, 'checkbox');
 function costData() {
   const values = new FormData(costForm);
   return Object.fromEntries([...costFields.map(name => [name, values.get(name) ?? '']), ['priorities', values.getAll('priorities')]]);
@@ -210,23 +232,27 @@ function clearCostError(name) {
   costForm.querySelectorAll(`[name="${name}"]`).forEach(input => input.removeAttribute('aria-invalid'));
   $(`#cost-${name}-error`).textContent = '';
 }
+function renderCostText() {
+  $('#cost-step-count').textContent = t('step', { step: costStep + 1 });
+  $('#cost-progress').setAttribute('aria-valuetext', t('step', { step: costStep + 1 }));
+  $('#cost-next-label').textContent = t(costStep === 6 ? 'discussCost' : costStep === 5 ? 'showCost' : 'next');
+  if (costStep === 6) {
+    const data = costData();
+    $('#cost-total').textContent = `${costNumber.format(estimateBudget(data.guests, data.budget))} ₸`;
+    $('#cost-formula').textContent = t('formula', { guests: costNumber.format(Number(data.guests)), budget: costNumber.format(Number(data.budget)) });
+    $('#cost-summary-event').textContent = getPlannerCopy(locale).events[data.event];
+    $('#cost-summary-date').textContent = data.date ? formatDate(data.date, locale) : t('dateUndecided');
+    $('#cost-summary-help').textContent = getCostCopy(locale).help[data.help] || t('helpUndecided');
+    $('#cost-summary-priorities').textContent = data.priorities.map(key => getCostCopy(locale).priorities[key]).join(', ') || t('prioritiesUndecided');
+  }
+}
 function renderCostStep(index, focus = true) {
   costStep = index;
   costSteps.forEach((step, i) => { step.hidden = i !== index; });
-  $('#cost-step-count').textContent = `Шаг ${index + 1} из 7`;
   $('#cost-progress').setAttribute('aria-valuenow', String(index + 1));
   $('#cost-progress-fill').style.width = `${(index + 1) / 7 * 100}%`;
   $('#cost-back').hidden = index === 0;
-  $('#cost-next-label').textContent = index === 6 ? 'Обсудить расчёт' : index === 5 ? 'Показать стоимость' : 'Продолжить';
-  if (index === 6) {
-    const data = costData();
-    $('#cost-total').textContent = `${costNumber.format(estimateBudget(data.guests, data.budget))} ₸`;
-    $('#cost-formula').textContent = `${costNumber.format(Number(data.guests))} гостей × ${costNumber.format(Number(data.budget))} ₸ на человека`;
-    $('#cost-summary-event').textContent = data.event;
-    $('#cost-summary-date').textContent = data.date ? new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Almaty' }).format(new Date(`${data.date}T12:00:00Z`)) : 'Пока выбираем';
-    $('#cost-summary-help').textContent = COST_HELP[data.help] || 'Пока не решили';
-    $('#cost-summary-priorities').textContent = data.priorities.map(key => COST_PRIORITIES[key]).join(', ') || 'Пока не выбрали';
-  }
+  renderCostText();
   costDialog.scrollTop = 0;
   if (focus) costSteps[index].querySelector('.cost-question').focus({ preventScroll: true });
 }
@@ -235,13 +261,15 @@ $$('[data-cost-open]').forEach(link => link.addEventListener('click', event => {
   openDialog(costDialog, link); renderCostStep(costStep);
 }));
 $('#cost-back').addEventListener('click', () => renderCostStep(costStep - 1));
+const rangeUpdaters = [];
 $$('[data-cost-range]').forEach(range => {
   const number = $(`#cost-${range.dataset.costRange}`);
   const syncRange = () => {
     if (number.value !== '' && number.validity.valid) range.value = number.value;
     range.style.setProperty('--range-fill', `${(Number(range.value) - Number(range.min)) / (Number(range.max) - Number(range.min)) * 100}%`);
-    range.setAttribute('aria-valuetext', `${costNumber.format(Number(range.value))}${range.dataset.costRange === 'budget' ? ' тенге на гостя' : ' гостей'}`);
+    range.setAttribute('aria-valuetext', t(range.dataset.costRange === 'budget' ? 'rangeBudget' : 'rangeGuests', { value: costNumber.format(Number(range.value)) }));
   };
+  rangeUpdaters.push(syncRange);
   range.addEventListener('input', () => { number.value = range.value; clearCostError(number.name); syncRange(); });
   number.addEventListener('input', syncRange); syncRange();
 });
@@ -249,9 +277,9 @@ costForm.addEventListener('input', event => { if (costFields.includes(event.targ
 costForm.addEventListener('submit', event => {
   event.preventDefault();
   const data = costData();
-  const errors = validateCostStep(costStep, data);
-  if (costStep === 5) Object.assign(errors, validateCostStep(6, data));
-  if ((costStep === 1 || costStep >= 5) && $('#cost-date').validity.badInput) errors.date = 'Проверьте дату: выберите её в календаре.';
+  const errors = validateCostStep(costStep, data, undefined, locale);
+  if (costStep === 5) Object.assign(errors, validateCostStep(6, data, undefined, locale));
+  if ((costStep === 1 || costStep >= 5) && $('#cost-date').validity.badInput) errors.date = t('badDate');
   costFields.forEach(clearCostError);
   const firstError = Object.keys(errors)[0];
   if (firstError) {
@@ -265,17 +293,18 @@ costForm.addEventListener('submit', event => {
     return;
   }
   if (costStep < 6) renderCostStep(costStep + 1);
-  else showMessage(composeCostMessage(data), $('#cost-next'), 'cost');
+  else showMessage(() => composeCostMessage(data, locale), $('#cost-next'), 'cost');
 });
 
 const gallery = [
-  { src: '/assets/venue-celebration.jpg', alt: 'Сцена и оформление праздника в Royal Palace', caption: 'Сцена и оформление' },
-  { src: '/assets/venue-hall.jpg', alt: 'Оформление столов в Royal Palace', caption: 'Оформление столов' },
-  { src: '/assets/venue-room.jpg', alt: 'Круглый стол и бело-золотые кресла в интерьере Royal Palace', caption: 'Интерьер и рассадка' },
-  { src: '/assets/venue-hero.jpg', alt: 'Основной, самый большой зал Royal Palace', caption: 'Основной зал' },
+  { src: '/assets/venue-celebration.jpg' },
+  { src: '/assets/venue-hall.jpg' },
+  { src: '/assets/venue-room.jpg' },
+  { src: '/assets/venue-hero.jpg' },
 ];
 let galleryIndex = 0;
 let galleryZoomed = false;
+let galleryState = 'loading';
 const galleryImage = $('#lightbox-image');
 const stage = $('#lightbox-stage');
 function setGalleryZoom(zoomed) {
@@ -285,7 +314,7 @@ function setGalleryZoom(zoomed) {
   galleryZoomed = zoomed;
   stage.classList.toggle('is-zoomed', zoomed);
   $('#gallery-zoom').setAttribute('aria-pressed', String(zoomed));
-  $('#gallery-zoom').textContent = zoomed ? 'Показать целиком' : 'Увеличить ×2';
+  $('#gallery-zoom').textContent = t(zoomed ? 'zoomOut' : 'zoomIn');
   $('#gallery-zoom-hint').hidden = !zoomed;
   stage.scrollTop = 0; stage.scrollLeft = 0;
   if (zoomed) stage.focus({ preventScroll: true });
@@ -296,10 +325,12 @@ function renderGallery(index, retry = false) {
   setGalleryZoom(false);
   galleryImage.hidden = true;
   $('#gallery-image-status').hidden = false;
-  $('#gallery-image-message').textContent = 'Загружаем фотографию…';
+  galleryState = 'loading';
+  $('#gallery-image-message').textContent = t('photoLoading');
   $('#gallery-retry').hidden = true;
   $('#gallery-zoom').disabled = true;
   galleryImage.onload = () => {
+    galleryState = 'ready';
     galleryImage.hidden = false;
     $('#gallery-image-status').hidden = true;
     $('#gallery-zoom').disabled = false;
@@ -312,14 +343,15 @@ function renderGallery(index, retry = false) {
     });
   };
   galleryImage.onerror = () => {
+    galleryState = 'error';
     galleryImage.hidden = true;
-    $('#gallery-image-message').textContent = 'Фото не загрузилось. Попробуйте ещё раз или откройте следующее.';
+    $('#gallery-image-message').textContent = t('photoError');
     $('#gallery-retry').hidden = false;
   };
-  galleryImage.alt = item.alt;
+  galleryImage.alt = t(`gallery.alt.${galleryIndex}`);
   galleryImage.src = `${item.src}${retry ? `?retry=${Date.now()}` : ''}`;
   $('#gallery-original').href = item.src;
-  $('#lightbox-caption').textContent = item.caption;
+  $('#lightbox-caption').textContent = t(`gallery.caption.${galleryIndex}`);
   $('#gallery-count').textContent = `${galleryIndex + 1} / ${gallery.length}`;
 }
 $$('[data-gallery]').forEach(button => button.addEventListener('click', event => {
@@ -372,3 +404,62 @@ $('#form-fallback').hidden = true;
 $('#fallback-nav').hidden = true;
 closeMenu();
 menuToggle.hidden = false;
+
+function applyLanguage(nextLocale) {
+  locale = normalizeLocale(nextLocale);
+  document.documentElement.lang = locale;
+  languageSelect.value = locale;
+  languageSelect.setAttribute('aria-label', t('language'));
+  languageSelect.title = t('language');
+  const copy = PAGE_COPY[locale];
+  $$('[data-i18n]').forEach(element => { element.textContent = copy[element.dataset.i18n]; });
+  ['placeholder', 'aria-label', 'alt', 'title', 'content'].forEach(attribute => {
+    $$(`[data-i18n-${attribute}]`).forEach(element => {
+      element.setAttribute(attribute, copy[element.getAttribute(`data-i18n-${attribute}`)]);
+    });
+  });
+  const plannerCopy = getPlannerCopy(locale);
+  const costCopy = getCostCopy(locale);
+  $$('#event option').forEach(option => { if (Object.hasOwn(plannerCopy.events, option.value)) option.textContent = plannerCopy.events[option.value]; });
+  [['event', plannerCopy.events], ['help', costCopy.help], ['priorities', costCopy.priorities]].forEach(([name, labels]) => {
+    costForm.querySelectorAll(`input[name="${name}"]`).forEach(input => { input.nextElementSibling.textContent = labels[input.value]; });
+  });
+  menuToggle.setAttribute('aria-label', t(mobileNav.hidden ? 'menuOpen' : 'menuClose'));
+  renderTopics();
+  updateWishesCount();
+  costNumber = numberFormatter(locale);
+  renderCostText();
+  rangeUpdaters.forEach(update => update());
+
+  // Refresh existing errors without validating untouched fields or changing drafts.
+  const enquiryErrors = validateEnquiry({ event: $('#event').value, hall: $('#hall').value, date: dateField.value, guests: $('#guests').value, wishes: $('#wishes').value }, undefined, locale);
+  if (dateField.validity.badInput) enquiryErrors.date = t('badDate');
+  if ($('#guests').validity.badInput) enquiryErrors.guests = t('badGuests');
+  form.querySelectorAll('[aria-invalid="true"]').forEach(input => {
+    if (enquiryErrors[input.id]) $(`#${input.id}-error`).textContent = enquiryErrors[input.id];
+    else clearFieldError(input.id);
+  });
+  if ($('#form-status').textContent) $('#form-status').textContent = t('checkFields');
+  const costErrors = validateCostStep(6, costData(), undefined, locale);
+  if ($('#cost-date').validity.badInput) costErrors.date = t('badDate');
+  costFields.forEach(name => {
+    if (!costForm.querySelector(`[name="${name}"][aria-invalid="true"]`)) return;
+    if (costErrors[name]) $(`#cost-${name}-error`).textContent = costErrors[name];
+    else clearCostError(name);
+  });
+  $$('[data-quick-topic]').forEach(link => { link.href = whatsappUrl(composeQuickMessage(link.dataset.quickTopic, link.dataset.quickHall, locale)); });
+  if (messageDialog.open && messageFactory) renderMessage();
+  galleryImage.alt = t(`gallery.alt.${galleryIndex}`);
+  $('#lightbox-caption').textContent = t(`gallery.caption.${galleryIndex}`);
+  $('#gallery-count').textContent = `${galleryIndex + 1} / ${gallery.length}`;
+  $('#gallery-zoom').textContent = t(galleryZoomed ? 'zoomOut' : 'zoomIn');
+  $('#gallery-image-message').textContent = t(galleryState === 'error' ? 'photoError' : 'photoLoading');
+}
+languageSelect.addEventListener('change', () => {
+  applyLanguage(languageSelect.value);
+  try { localStorage.setItem('royal-palace-language', locale); } catch { /* The current page still works without storage. */ }
+  const url = new URL(location.href);
+  url.searchParams.set('lang', locale);
+  history.replaceState(null, '', url);
+});
+applyLanguage(locale);

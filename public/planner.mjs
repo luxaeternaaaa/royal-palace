@@ -1,3 +1,5 @@
+import { normalizeLocale as normalizeModelLocale, formatDate } from './i18n.mjs';
+
 export const EVENTS = ['Свадьба', 'Қыз ұзату', 'Юбилей', 'Семейное торжество', 'Корпоративное событие', 'Другое событие'];
 export const HALLS = { help: 'Помогите выбрать зал', main: 'Основной зал', middle: 'Орта зал (средний)', small: 'Кіші зал (малый)' };
 export const ENQUIRY_TOPICS = {
@@ -6,6 +8,70 @@ export const ENQUIRY_TOPICS = {
   guests: 'Подскажите, какая рассадка подойдёт для нашего числа гостей.',
   visit: 'Хотим приехать посмотреть зал. Подскажите, когда это удобно?',
 };
+
+const COPY = {
+  ru: {
+    events: Object.fromEntries(EVENTS.map(event => [event, event])), halls: HALLS, topics: ENQUIRY_TOPICS,
+    errors: {
+      event: 'Выберите событие.', hall: 'Выберите зал из списка или «Помогите выбрать».',
+      date: 'Проверьте дату: выберите её в календаре.', pastDate: 'Эта дата уже прошла. Выберите сегодняшнюю или будущую дату.',
+      guests: 'Укажите целое число гостей от 1 до 5000.', wishes: 'Сократите пожелания до 500 символов.', quickTopic: 'Неизвестная тема быстрого запроса.',
+    },
+    greeting: 'Здравствуйте, Royal Palace!', labels: { event: 'Событие', hall: 'Зал', date: 'Дата', guests: 'Гостей', wishes: 'Пожелания' },
+    dateUnknown: 'пока выбираем', hallUnknown: 'пока не выбрали', guestsUnknown: 'пока не знаем',
+    conditions: 'Подскажите, пожалуйста, какие у вас условия?', availability: 'Подскажите, пожалуйста, свободна ли дата и какие у вас условия?',
+    hallPhotos: hall => `Интересует ${hall}. Пришлите, пожалуйста, фото и варианты рассадки.`,
+    smallCapacity: ' На сколько гостей он рассчитан?',
+    allPhotos: halls => `Пришлите, пожалуйста, фото всех трёх залов: ${halls.join(', ')}. Подскажите вместимость и варианты рассадки каждого зала.`,
+  },
+  kk: {
+    events: { 'Свадьба': 'Үйлену тойы', 'Қыз ұзату': 'Қыз ұзату', 'Юбилей': 'Мерейтой', 'Семейное торжество': 'Отбасылық мереке', 'Корпоративное событие': 'Корпоративтік іс-шара', 'Другое событие': 'Басқа іс-шара' },
+    halls: { help: 'Зал таңдауға көмектесіңіз', main: 'Негізгі зал', middle: 'Орта зал', small: 'Кіші зал' },
+    topics: {
+      hall: 'Мерекемізге лайық зал таңдауға көмектесіңізші.',
+      menu: 'Бағалары көрсетілген қазіргі мәзірді жіберіңізші. Банкет құнына не кіреді?',
+      guests: 'Қонақтарымыздың санына сай үстелдерді орналастыру нұсқаларын ұсыныңызшы.',
+      visit: 'Залды көруге келгіміз келеді. Қай уақытта келуге болады?',
+    },
+    errors: {
+      event: 'Іс-шара түрін таңдаңыз.', hall: 'Тізімнен залды немесе «Зал таңдауға көмектесіңіз» нұсқасын таңдаңыз.',
+      date: 'Күнді тексеріп, күнтізбеден таңдаңыз.', pastDate: 'Бұл күн өтіп кетті. Бүгінгі немесе алдағы күнді таңдаңыз.',
+      guests: 'Қонақтар санын 1 мен 5000 аралығындағы бүтін санмен көрсетіңіз.', wishes: 'Тілектеріңізді 500 таңбаға дейін қысқартыңыз.', quickTopic: 'Жылдам сұрау тақырыбы белгісіз.',
+    },
+    greeting: 'Сәлеметсіз бе, Royal Palace!', labels: { event: 'Іс-шара', hall: 'Зал', date: 'Күні', guests: 'Қонақтар саны', wishes: 'Тілектер' },
+    dateUnknown: 'әзірге таңдап жатырмыз', hallUnknown: 'әзірге таңдамадық', guestsUnknown: 'әзірге белгісіз',
+    conditions: 'Шарттарыңыз туралы айтып беріңізші.', availability: 'Осы күн бос па? Шарттарыңыз туралы айтып беріңізші.',
+    hallPhotos: hall => `Бізді ${hall} қызықтырады. Фотосуреттерін және үстелдерді орналастыру нұсқаларын жіберіңізші.`,
+    smallCapacity: ' Неше қонаққа арналған?',
+    allPhotos: halls => `Үш залдың фотосуреттерін жіберіңізші: ${halls.join(', ')}. Әр залдың сыйымдылығы мен үстелдерді орналастыру нұсқаларын айтып беріңізші.`,
+  },
+  en: {
+    events: { 'Свадьба': 'Wedding', 'Қыз ұзату': 'Qyz uzatu', 'Юбилей': 'Milestone celebration', 'Семейное торжество': 'Family celebration', 'Корпоративное событие': 'Corporate event', 'Другое событие': 'Other event' },
+    halls: { help: 'Help us choose a hall', main: 'Main hall', middle: 'Orta hall (medium)', small: 'Kishi hall (small)' },
+    topics: {
+      hall: 'Please help us choose a hall for our celebration.',
+      menu: 'Please send your current menu with prices. What does the banquet price include?',
+      guests: 'Please suggest seating arrangements for our guest count.',
+      visit: 'We would like to visit the venue. When would be convenient?',
+    },
+    errors: {
+      event: 'Choose an event.', hall: 'Choose a hall from the list or select “Help us choose a hall”.',
+      date: 'Check the date and choose it from the calendar.', pastDate: 'This date has passed. Choose today or a future date.',
+      guests: 'Enter a whole number of guests from 1 to 5000.', wishes: 'Shorten your preferences to 500 characters.', quickTopic: 'Unknown quick enquiry topic.',
+    },
+    greeting: 'Hello, Royal Palace!', labels: { event: 'Event', hall: 'Hall', date: 'Date', guests: 'Guests', wishes: 'Preferences' },
+    dateUnknown: 'still deciding', hallUnknown: 'not chosen yet', guestsUnknown: 'not known yet',
+    conditions: 'Please tell us about your terms and options.', availability: 'Is this date available? Please tell us about your terms and options.',
+    hallPhotos: hall => `We are interested in ${hall}. Please send photos and seating options.`,
+    smallCapacity: ' How many guests can it accommodate?',
+    allPhotos: halls => `Please send photos of all three halls: ${halls.join(', ')}. Please confirm the capacity and seating options for each hall.`,
+  },
+};
+
+export function getPlannerCopy(locale = 'ru') {
+  const { events, halls, topics } = COPY[normalizeModelLocale(locale)];
+  return { events, halls, topics };
+}
 
 export function astanaToday(now = new Date()) {
   const parts = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Almaty', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(now);
@@ -18,60 +84,62 @@ function validCalendarDate(value) {
   return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
 }
 
-export function validateEnquiry(data, today = astanaToday()) {
+export function validateEnquiry(data, today = astanaToday(), locale = 'ru') {
+  const copy = COPY[normalizeModelLocale(locale)].errors;
   const errors = {};
-  if (!EVENTS.includes(data.event)) errors.event = 'Выберите событие.';
-  if (data.hall && !Object.hasOwn(HALLS, data.hall)) errors.hall = 'Выберите зал из списка или «Помогите выбрать».';
+  if (!EVENTS.includes(data.event)) errors.event = copy.event;
+  if (data.hall && !Object.hasOwn(HALLS, data.hall)) errors.hall = copy.hall;
   const date = String(data.date ?? '').trim();
   if (!data.dateUndecided && date) {
-    if (!validCalendarDate(date)) errors.date = 'Проверьте дату: выберите её в календаре.';
-    else if (date < today) errors.date = 'Эта дата уже прошла. Выберите сегодняшнюю или будущую дату.';
+    if (!validCalendarDate(date)) errors.date = copy.date;
+    else if (date < today) errors.date = copy.pastDate;
   }
   const guests = String(data.guests ?? '').trim();
   if (!data.guestsUndecided && guests && (!/^\d{1,4}$/.test(guests) || Number(guests) < 1 || Number(guests) > 5000)) {
-    errors.guests = 'Укажите целое число гостей от 1 до 5000.';
+    errors.guests = copy.guests;
   }
-  if (String(data.wishes ?? '').length > 500) errors.wishes = 'Сократите пожелания до 500 символов.';
+  if (String(data.wishes ?? '').length > 500) errors.wishes = copy.wishes;
   return errors;
 }
 
-export function composeMessage(data) {
+export function composeMessage(data, locale = 'ru') {
+  const copy = COPY[normalizeModelLocale(locale)];
   const dateValue = String(data.date ?? '').trim();
   const dateUnknown = data.dateUndecided || !dateValue;
-  const date = dateUnknown ? 'пока выбираем' : new Intl.DateTimeFormat('ru-RU', {
-    day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Almaty',
-  }).format(new Date(`${dateValue}T12:00:00Z`)).replace(/ г\.$/, '');
+  const date = dateUnknown ? copy.dateUnknown : formatDate(dateValue, locale);
   const guests = String(data.guests ?? '').trim();
   const wishes = String(data.wishes ?? '').trim();
-  const hall = data.hall !== 'help' && Object.hasOwn(HALLS, data.hall) ? HALLS[data.hall] : 'пока не выбрали';
-  const questions = [...new Set(data.topics ?? [])].map(topic => ENQUIRY_TOPICS[topic]).filter(Boolean);
+  const hall = data.hall !== 'help' && Object.hasOwn(copy.halls, data.hall) ? copy.halls[data.hall] : copy.hallUnknown;
+  const questions = [...new Set(data.topics ?? [])].filter(topic => Object.hasOwn(copy.topics, topic)).map(topic => copy.topics[topic]);
+  const event = Object.hasOwn(copy.events, data.event) ? copy.events[data.event] : data.event;
   return [
-    'Здравствуйте, Royal Palace!',
+    copy.greeting,
     '',
-    `Событие: ${data.event}`,
-    `Зал: ${hall}`,
-    `Дата: ${date}`,
-    `Гостей: ${data.guestsUndecided || !guests ? 'пока не знаем' : Number(guests)}`,
-    ...(wishes ? [`Пожелания: ${wishes}`] : []),
+    `${copy.labels.event}: ${event}`,
+    `${copy.labels.hall}: ${hall}`,
+    `${copy.labels.date}: ${date}`,
+    `${copy.labels.guests}: ${data.guestsUndecided || !guests ? copy.guestsUnknown : Number(guests)}`,
+    ...(wishes ? [`${copy.labels.wishes}: ${wishes}`] : []),
     '',
     ...(questions.length ? questions : [dateUnknown
-      ? 'Подскажите, пожалуйста, какие у вас условия?'
-      : 'Подскажите, пожалуйста, свободна ли дата и какие у вас условия?']),
+      ? copy.conditions
+      : copy.availability]),
   ].join('\n');
 }
 
-export function composeQuickMessage(topic, hall = 'help') {
+export function composeQuickMessage(topic, hall = 'help', locale = 'ru') {
+  const copy = COPY[normalizeModelLocale(locale)];
   let question;
-  if (topic === 'menu' || topic === 'visit') question = ENQUIRY_TOPICS[topic];
+  if (topic === 'menu' || topic === 'visit') question = copy.topics[topic];
   else if (topic === 'hallPhotos') {
-    if (hall !== 'help' && Object.hasOwn(HALLS, hall)) {
-      question = `Интересует ${HALLS[hall]}. Пришлите, пожалуйста, фото и варианты рассадки.`;
-      if (hall === 'small') question += ' На сколько гостей он рассчитан?';
+    if (hall !== 'help' && Object.hasOwn(copy.halls, hall)) {
+      question = copy.hallPhotos(copy.halls[hall]);
+      if (hall === 'small') question += copy.smallCapacity;
     } else {
-      question = `Пришлите, пожалуйста, фото всех трёх залов: ${[HALLS.main, HALLS.middle, HALLS.small].join(', ')}. Подскажите вместимость и варианты рассадки каждого зала.`;
+      question = copy.allPhotos([copy.halls.main, copy.halls.middle, copy.halls.small]);
     }
-  } else throw new RangeError('Неизвестная тема быстрого запроса.');
-  return `Здравствуйте, Royal Palace!\n\n${question}`;
+  } else throw new RangeError(copy.errors.quickTopic);
+  return `${copy.greeting}\n\n${question}`;
 }
 
 export function whatsappUrl(message) {

@@ -84,6 +84,7 @@ p { line-height: 1.75; }
 .desktop-nav a { position: relative; display: flex; align-items: center; min-height: 44px; }
 .desktop-nav a:after { content: ''; position: absolute; bottom: 5px; left: 0; width: 0; height: 1px; background: var(--gold); transition: width .2s; }
 .desktop-nav a:hover:after { width: 100%; }
+.language-select { flex: 0 0 72px; width: 72px; min-height: 44px; padding: 8px 6px; border: 1px solid var(--line); border-radius: var(--radius-control); background: transparent; color: var(--ink); font-size: 16px; }
 .menu-toggle, .mobile-nav { display: none; }
 .hero { position: relative; isolation: isolate; overflow: hidden; min-height: clamp(640px, calc(100svh - 80px), 740px); color: var(--paper); background: var(--shade); }
 .hero-image, .hero-shade { position: absolute; inset: 0; width: 100%; height: 100%; }
@@ -175,10 +176,10 @@ p { line-height: 1.75; }
 .faq-list details:first-child { border-top: 1px solid var(--line); }
 .faq-list summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 22px; min-height: 80px; padding-block: 22px; font: 500 18px/1.55 var(--body); }
 .faq-list summary::-webkit-details-marker { display: none; }
-.faq-list summary>span { position: relative; flex-shrink: 0; width: 18px; height: 18px; }
-.faq-list summary>span:before, .faq-list summary>span:after { content: ''; position: absolute; top: 8px; left: 2px; right: 2px; height: 1px; background: var(--action-ink); transition: transform .2s; }
-.faq-list summary>span:after { transform: rotate(90deg); }
-.faq-list details[open] summary>span:after { transform: rotate(0); }
+.faq-list summary>span[aria-hidden] { position: relative; flex-shrink: 0; width: 18px; height: 18px; }
+.faq-list summary>span[aria-hidden]:before, .faq-list summary>span[aria-hidden]:after { content: ''; position: absolute; top: 8px; left: 2px; right: 2px; height: 1px; background: var(--action-ink); transition: transform .2s; }
+.faq-list summary>span[aria-hidden]:after { transform: rotate(90deg); }
+.faq-list details[open] summary>span[aria-hidden]:after { transform: rotate(0); }
 .faq-list summary:hover { color: var(--action-ink); }
 .faq-list details>div { padding: 0 30px 25px 0; color: var(--muted); font-size: 16px; }
 .faq-list details>div a:not(.text-link) { color: var(--action-ink); text-decoration: underline; text-underline-offset: 3px; }
@@ -243,7 +244,7 @@ dialog::backdrop { background: #241f1ad9; }
 #gallery-prev .icon { transform: rotate(180deg); }
 .hall-capacity, .contact-phone, #gallery-count, #wishes-count { font-variant-numeric: tabular-nums; }
 
-.cost-dialog { width: min(1160px, calc(100% - 64px)); margin: 16px 24px 16px auto; border: 1px solid var(--line); border-radius: var(--radius-panel); background: var(--paper); scroll-padding-block: 160px 100px; }
+.cost-dialog { width: min(1160px, calc(100% - 64px)); margin: auto; border: 1px solid var(--line); border-radius: var(--radius-panel); background: var(--paper); scroll-padding-block: 160px 100px; }
 .cost-header { position: sticky; top: 0; z-index: 2; padding: 24px 32px 0; background: var(--paper); }
 .cost-header-row { display: flex; align-items: start; justify-content: space-between; gap: 20px; }
 .cost-header h2 { font: 30px/1.2 var(--display); letter-spacing: -.015em; }
@@ -300,7 +301,7 @@ dialog::backdrop { background: #241f1ad9; }
   .cost-choice { padding-inline: 14px; font-size: 16px; }
 }
 @media (max-width: 760px) {
-  .cost-dialog { width: calc(100% - 16px); max-width: calc(100% - 16px); max-height: calc(100dvh - 16px); margin: 8px; }
+  .cost-dialog { width: calc(100% - 16px); max-width: calc(100% - 16px); max-height: calc(100dvh - 16px); margin: auto; }
   .cost-header { padding: 20px 20px 0; }
   .cost-header h2 { font-size: 28px; }
   .cost-progress { margin-inline: -20px; }
@@ -418,7 +419,8 @@ dialog::backdrop { background: #241f1ad9; }
   .container { width: calc(100% - 44px); }
   .section-pad { padding-block: 62px; }
   h2 { font-size: 42px; }
-  .site-header { height: 72px; padding-inline: 22px; gap: 15px; }
+  .site-header { height: 72px; padding-inline: 22px; gap: 8px; }
+  .language-select { flex-basis: 62px; width: 62px; margin-left: auto; }
   .brand { gap: 10px; }
   .brand-logo { width: 58px; height: 58px; }
   .brand-type { font-size: 24px; letter-spacing: 1.8px; }
