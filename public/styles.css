@@ -118,9 +118,6 @@ p { line-height: 1.75; }
 .gallery-item>.gallery-label { position: static; min-height: 52px; padding: 14px 16px; color: var(--ink); background: var(--paper); font-size: 15px; font-weight: 500; line-height: 1.5; }
 .gallery-item:hover>.gallery-label { color: var(--action-ink); text-decoration: underline; text-underline-offset: 4px; }
 .gallery-zoom-icon { min-width: 20px; width: 20px; height: 20px; stroke-width: 1.5; }
-.gallery-footer { display: flex; align-items: center; justify-content: space-between; gap: 30px; margin-top: 23px; }
-.gallery-footer>p { color: var(--muted); font-size: 15px; line-height: 1.8; }
-.gallery-footer .text-link { font-size: 15px; }
 .photo-unavailable { background: var(--parchment); }
 .photo-unavailable img { visibility: hidden; }
 .photo-unavailable:after { display: none; }
@@ -350,7 +347,6 @@ dialog::backdrop { background: #241f1ad9; }
 .hall-capacity span { font-size: 15px; color: var(--muted); }
 .hall-capacity-request strong { font-size: 17px; letter-spacing: 0; }
 .hall-option .hall-action { display: inline-flex; justify-self: start; max-width: none; margin-top: 16px; font-size: 16px; }
-.hall-source { max-width: 900px; margin-top: 22px; color: var(--muted); font-size: 15px; }
 .content-disclosure { border-top: 1px solid var(--line); }
 .content-disclosure summary { display: flex; align-items: center; justify-content: space-between; gap: 18px; min-height: 66px; padding-block: 18px; list-style: none; font-size: 16px; font-weight: 500; line-height: 1.5; }
 .content-disclosure summary::-webkit-details-marker { display: none; }
@@ -362,7 +358,6 @@ dialog::backdrop { background: #241f1ad9; }
 .menu-section.section-pad { padding-block: 64px; }
 .menu-layout { display: grid; grid-template-columns: .9fr 1.1fr; gap: 85px; align-items: start; }
 .menu-layout>div { min-width: 0; }
-.menu-intro { max-width: 370px; margin-top: 25px; color: var(--muted); font-size: 17px; }
 .menu-request { padding-top: 8px; }
 .menu-request>p:first-child { max-width: 530px; font-size: 16px; }
 .menu-request>.button { margin-top: 18px; }
@@ -447,8 +442,6 @@ dialog::backdrop { background: #241f1ad9; }
   .gallery-main img { aspect-ratio: 3/2; }
   .gallery-label { left: 17px; right: 17px; bottom: 16px; font-size: 15px; }
   .gallery-item>.gallery-label { padding: 12px; gap: 8px; }
-  .gallery-footer { flex-direction: column; align-items: start; gap: 15px; margin-top: 20px; }
-  .gallery-footer>p, .gallery-footer .text-link { font-size: 15px; }
   .photo-fallback { inset: 16px 16px 75px; font-size: 14px; }
   .enquiry-grid { grid-template-columns: 1fr; gap: 27px; }
   .enquiry-copy { display: block; padding-top: 0; }
@@ -470,10 +463,8 @@ dialog::backdrop { background: #241f1ad9; }
   .faq-list summary { font-size: 18px; min-height: 76px; gap: 20px; }
   .faq-list details>div { font-size: 16px; padding-right: 20px; }
   .contacts-grid, .menu-layout { grid-template-columns: 1fr; gap: 28px; }
-  .menu-intro { max-width: none; font-size: 16px; margin-top: 18px; }
   .menu-section.section-pad { padding-block: 44px; }
   .menu-copy>p { font-size: 16px; }
-  .menu-copy>.quick-help { font-size: 15px; }
   .visit-intro { font-size: 16px; margin-top: 20px; }
   .contact-address { margin-top: 22px; font-size: 17px; }
   .contact-phone { font-size: 28px; margin-top: 8px; }
@@ -541,7 +532,6 @@ dialog::backdrop { background: #241f1ad9; }
   .hall-capacity-request strong { font-size: 16px; }
   .hall-capacity-request span { font-size: 15px; }
   .hall-action { grid-column: 1 / -1; justify-self: start; max-width: none; font-size: 15px; }
-  .hall-source { margin-top: 22px; font-size: 15px; }
   .form-details summary { min-height: 76px; }
 }
 @media (max-width: 380px) {
@@ -585,7 +575,6 @@ dialog::backdrop { background: #241f1ad9; }
   .hall-capacity strong { font-size: 25px; }
   .hall-capacity-request strong { font-size: 16px; }
   .hall-option .hall-action { font-size: 15px; margin-top: 12px; }
-  .hall-source { margin-top: 22px; }
 
 }
 @media (max-width: 380px) {
