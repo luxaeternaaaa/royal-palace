@@ -1,4 +1,5 @@
-import { astanaToday, validateEnquiry, composeMessage, composeQuickMessage, whatsappUrl, ENQUIRY_TOPICS } from './planner.mjs';
+import { astanaToday, validateEnquiry, composeMessage, composeQuickMessage, whatsappUrl, ENQUIRY_TOPICS, EVENTS } from './planner.mjs';
+import { COST_HELP, COST_PRIORITIES, validateCostStep, estimateBudget, composeCostMessage } from './cost.mjs';
 
 const $ = selector => document.querySelector(selector);
 const $$ = selector => [...document.querySelectorAll(selector)];
@@ -78,13 +79,13 @@ $('#clear-enquiry-context').addEventListener('click', () => {
 });
 
 const messageDialog = $('#message-dialog');
-let dialogOpener = null;
-let previewIsQuick = false;
+const dialogOpeners = new WeakMap();
+let previewOrigin = 'form';
 let editEnquiryOnClose = false;
 let messageVersion = 0;
 function openDialog(dialog, opener) {
   closeMenu();
-  dialogOpener = opener;
+  dialogOpeners.set(dialog, opener);
   dialog.showModal();
   dialog.scrollTop = 0;
   document.body.classList.add('dialog-open');
@@ -98,7 +99,7 @@ $$('dialog').forEach(dialog => {
   });
   dialog.addEventListener('close', () => {
     if (dialog === messageDialog) messageVersion++;
-    document.body.classList.remove('dialog-open');
+    document.body.classList.toggle('dialog-open', !!document.querySelector('dialog[open]'));
     if (dialog === messageDialog && editEnquiryOnClose) {
       editEnquiryOnClose = false;
       formDetails.open = true;
@@ -106,28 +107,29 @@ $$('dialog').forEach(dialog => {
       form.scrollIntoView({ block: 'start', behavior: reducedMotion() ? 'instant' : 'smooth' });
       return;
     }
-    if (dialogOpener?.isConnected) dialogOpener.focus({ preventScroll: true });
+    const opener = dialogOpeners.get(dialog);
+    if (opener?.isConnected) opener.focus({ preventScroll: true });
   });
 });
-function showMessage(message, opener, quick = false) {
+function showMessage(message, opener, origin = 'form') {
   messageVersion++;
-  previewIsQuick = quick;
+  previewOrigin = origin;
   editEnquiryOnClose = false;
   $('#message-preview').textContent = message;
   $('#whatsapp-send').href = whatsappUrl(message);
   $('#copy-status').textContent = '';
   $('#copy-message').textContent = 'Скопировать текст';
   $('#copy-message').disabled = false;
-  $('.edit-message').textContent = quick ? 'Вернуться на сайт' : 'Изменить детали';
+  $('.edit-message').textContent = origin === 'cost' ? 'Вернуться к расчёту' : origin === 'quick' ? 'Вернуться на сайт' : 'Изменить детали';
   openDialog(messageDialog, opener);
 }
-$('.edit-message').addEventListener('click', () => { editEnquiryOnClose = !previewIsQuick; });
+$('.edit-message').addEventListener('click', () => { editEnquiryOnClose = previewOrigin === 'form'; });
 $$('[data-quick-topic]').forEach(link => {
   const message = composeQuickMessage(link.dataset.quickTopic, link.dataset.quickHall);
   link.href = whatsappUrl(message);
   link.addEventListener('click', event => {
     event.preventDefault();
-    showMessage(message, link, true);
+    showMessage(message, link, 'quick');
   });
 });
 form.addEventListener('submit', event => {
@@ -177,6 +179,93 @@ $('#copy-message').addEventListener('click', async () => {
       if (hadFocus && document.activeElement === document.body) button.focus({ preventScroll: true });
     }
   }
+});
+
+const costDialog = $('#cost-dialog');
+const costForm = $('#cost-form');
+const costSteps = $$('[data-cost-step]');
+const costFields = ['event', 'date', 'guests', 'budget', 'help', 'priorities'];
+const costNumber = new Intl.NumberFormat('ru-RU');
+let costStep = 0;
+
+function addCostChoices(container, name, choices, type = 'radio') {
+  Object.entries(choices).forEach(([value, title]) => {
+    const label = document.createElement('label');
+    label.className = 'cost-choice';
+    const input = document.createElement('input');
+    input.type = type; input.name = name; input.value = value;
+    input.setAttribute('aria-describedby', `cost-${name}-error`);
+    const text = document.createElement('span'); text.textContent = title;
+    label.append(input, text); container.append(label);
+  });
+}
+addCostChoices($('#cost-events'), 'event', Object.fromEntries(EVENTS.map(event => [event, event])));
+addCostChoices($('#cost-help'), 'help', COST_HELP);
+addCostChoices($('#cost-priorities'), 'priorities', COST_PRIORITIES, 'checkbox');
+function costData() {
+  const values = new FormData(costForm);
+  return Object.fromEntries([...costFields.map(name => [name, values.get(name) ?? '']), ['priorities', values.getAll('priorities')]]);
+}
+function clearCostError(name) {
+  costForm.querySelectorAll(`[name="${name}"]`).forEach(input => input.removeAttribute('aria-invalid'));
+  $(`#cost-${name}-error`).textContent = '';
+}
+function renderCostStep(index, focus = true) {
+  costStep = index;
+  costSteps.forEach((step, i) => { step.hidden = i !== index; });
+  $('#cost-step-count').textContent = `Шаг ${index + 1} из 7`;
+  $('#cost-progress').setAttribute('aria-valuenow', String(index + 1));
+  $('#cost-progress-fill').style.width = `${(index + 1) / 7 * 100}%`;
+  $('#cost-back').hidden = index === 0;
+  $('#cost-next-label').textContent = index === 6 ? 'Обсудить расчёт' : index === 5 ? 'Показать стоимость' : 'Продолжить';
+  if (index === 6) {
+    const data = costData();
+    $('#cost-total').textContent = `${costNumber.format(estimateBudget(data.guests, data.budget))} ₸`;
+    $('#cost-formula').textContent = `${costNumber.format(Number(data.guests))} гостей × ${costNumber.format(Number(data.budget))} ₸ на человека`;
+    $('#cost-summary-event').textContent = data.event;
+    $('#cost-summary-date').textContent = data.date ? new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Almaty' }).format(new Date(`${data.date}T12:00:00Z`)) : 'Пока выбираем';
+    $('#cost-summary-help').textContent = COST_HELP[data.help] || 'Пока не решили';
+    $('#cost-summary-priorities').textContent = data.priorities.map(key => COST_PRIORITIES[key]).join(', ') || 'Пока не выбрали';
+  }
+  costDialog.scrollTop = 0;
+  if (focus) costSteps[index].querySelector('.cost-question').focus({ preventScroll: true });
+}
+$$('[data-cost-open]').forEach(link => link.addEventListener('click', event => {
+  event.preventDefault(); $('#cost-date').min = astanaToday();
+  openDialog(costDialog, link); renderCostStep(costStep);
+}));
+$('#cost-back').addEventListener('click', () => renderCostStep(costStep - 1));
+$$('[data-cost-range]').forEach(range => {
+  const number = $(`#cost-${range.dataset.costRange}`);
+  const syncRange = () => {
+    if (number.value !== '' && number.validity.valid) range.value = number.value;
+    range.style.setProperty('--range-fill', `${(Number(range.value) - Number(range.min)) / (Number(range.max) - Number(range.min)) * 100}%`);
+    range.setAttribute('aria-valuetext', `${costNumber.format(Number(range.value))}${range.dataset.costRange === 'budget' ? ' тенге на гостя' : ' гостей'}`);
+  };
+  range.addEventListener('input', () => { number.value = range.value; clearCostError(number.name); syncRange(); });
+  number.addEventListener('input', syncRange); syncRange();
+});
+costForm.addEventListener('input', event => { if (costFields.includes(event.target.name)) clearCostError(event.target.name); });
+costForm.addEventListener('submit', event => {
+  event.preventDefault();
+  const data = costData();
+  const errors = validateCostStep(costStep, data);
+  if (costStep === 5) Object.assign(errors, validateCostStep(6, data));
+  if ((costStep === 1 || costStep >= 5) && $('#cost-date').validity.badInput) errors.date = 'Проверьте дату: выберите её в календаре.';
+  costFields.forEach(clearCostError);
+  const firstError = Object.keys(errors)[0];
+  if (firstError) {
+    renderCostStep(costFields.indexOf(firstError), false);
+    Object.entries(errors).forEach(([name, text]) => {
+      $(`#cost-${name}-error`).textContent = text;
+      costForm.querySelectorAll(`[name="${name}"]`).forEach(input => input.setAttribute('aria-invalid', 'true'));
+    });
+    const input = costForm.querySelector(`[name="${firstError}"]`);
+    input.focus({ preventScroll: true }); input.scrollIntoView({ block: 'center', behavior: 'instant' });
+    return;
+  }
+  if (costStep < 6) renderCostStep(costStep + 1);
+  else showMessage(composeCostMessage(data), $('#cost-next'), 'cost');
 });
 
 const gallery = [

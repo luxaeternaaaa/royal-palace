@@ -110,9 +110,9 @@
         </div>
         <div class="menu-copy">
           <div class="menu-request">
-            <p>Меню с ценами и расчёт для вашего праздника можно запросить у администратора.</p>
-            <a href="https://wa.me/77715790555?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%2C%20Royal%20Palace!%0A%0A%D0%9F%D1%80%D0%B8%D1%88%D0%BB%D0%B8%D1%82%D0%B5%2C%20%D0%BF%D0%BE%D0%B6%D0%B0%D0%BB%D1%83%D0%B9%D1%81%D1%82%D0%B0%2C%20%D0%B0%D0%BA%D1%82%D1%83%D0%B0%D0%BB%D1%8C%D0%BD%D0%BE%D0%B5%20%D0%BC%D0%B5%D0%BD%D1%8E%20%D1%81%20%D1%86%D0%B5%D0%BD%D0%B0%D0%BC%D0%B8.%20%D0%A7%D1%82%D0%BE%20%D0%B2%D1%85%D0%BE%D0%B4%D0%B8%D1%82%20%D0%B2%20%D1%81%D1%82%D0%BE%D0%B8%D0%BC%D0%BE%D1%81%D1%82%D1%8C%20%D0%B1%D0%B0%D0%BD%D0%BA%D0%B5%D1%82%D0%B0%3F" class="button button-primary" data-quick-topic="menu" target="_blank" rel="noopener noreferrer">Запросить меню и цены</a>
-            <p class="quick-help">Форму заполнять не нужно.</p>
+            <p>Укажите число гостей и бюджет на человека, чтобы оценить общую сумму.</p>
+            <a href="#enquiry-form" class="button button-primary" data-cost-open aria-haspopup="dialog" aria-controls="cost-dialog">Примерная стоимость <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+            <p class="quick-help">Меню и окончательную стоимость подтвердит администратор.</p>
           </div>
         </div>
       </div>
@@ -169,6 +169,29 @@
   </main>
   <footer class="site-footer"><div class="container footer-inner"><span>ROYAL PALACE · АСТАНА</span><p>Демонстрационная версия сайта.</p><a href="#top">Наверх <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a></div></footer>
   <a class="mobile-enquire" href="#enquiry-form" aria-hidden="true" tabindex="-1">Обсудить праздник <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+
+  <dialog id="cost-dialog" class="cost-dialog" aria-labelledby="cost-title">
+    <header class="cost-header">
+      <div class="cost-header-row"><div><p class="cost-kicker">Royal Palace · расчёт банкета</p><h2 id="cost-title">Примерная стоимость</h2></div><button class="icon-button" type="button" data-close-dialog aria-label="Закрыть расчёт"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button></div>
+      <div class="cost-progress-row"><span id="cost-step-count" aria-live="polite">Шаг 1 из 7</span><span>По вашим параметрам</span></div>
+      <div id="cost-progress" class="cost-progress" role="progressbar" aria-label="Ход расчёта" aria-valuemin="1" aria-valuemax="7" aria-valuenow="1"><span id="cost-progress-fill"></span></div>
+    </header>
+    <div class="cost-layout">
+      <aside class="cost-aside" aria-hidden="true"><img src="/assets/venue-room-preview.webp" width="720" height="1080" alt="" loading="lazy"></aside>
+      <form id="cost-form" class="cost-form" novalidate>
+        <div class="cost-content">
+          <fieldset data-cost-step><legend class="cost-question" tabindex="-1">Какое событие вы планируете?</legend><div id="cost-events" class="cost-choices cost-event-choices"></div><p id="cost-event-error" class="cost-error" role="status"></p></fieldset>
+          <fieldset data-cost-step hidden><legend class="cost-question" tabindex="-1">Когда хотите провести мероприятие?</legend><div class="field cost-date-field"><label for="cost-date">Желаемая дата</label><input id="cost-date" name="date" type="date" aria-describedby="cost-date-help cost-date-error"><p id="cost-date-help" class="cost-hint">Если дата ещё не выбрана, переходите дальше.</p><p id="cost-date-error" class="cost-error" role="status"></p></div></fieldset>
+          <fieldset data-cost-step hidden><legend class="cost-question" tabindex="-1">Сколько гостей ожидаете?</legend><div class="cost-number-row field"><label class="sr-only" for="cost-guests">Число гостей</label><input id="cost-guests" name="guests" type="number" min="1" max="550" step="1" value="100" inputmode="numeric" aria-describedby="cost-guests-error"><span>гостей</span></div><label class="sr-only" for="cost-guests-range">Число гостей — ползунок</label><input id="cost-guests-range" class="cost-range" type="range" min="1" max="550" step="1" value="100" data-cost-range="guests"><div class="cost-range-limits" aria-hidden="true"><span>1</span><span>550 гостей</span></div><p class="cost-hint">Основной зал — до 550 мест, орта зал — до 144.</p><p id="cost-guests-error" class="cost-error" role="status"></p></fieldset>
+          <fieldset data-cost-step hidden><legend class="cost-question" tabindex="-1">Какой бюджет планируете на гостя?</legend><div class="cost-number-row field"><label class="sr-only" for="cost-budget">Бюджет на одного гостя, тенге</label><input id="cost-budget" name="budget" type="number" min="1000" max="100000" step="1" value="20000" inputmode="numeric" aria-describedby="cost-budget-help cost-budget-error"><span>₸ / гость</span></div><label class="sr-only" for="cost-budget-range">Бюджет на гостя — ползунок</label><input id="cost-budget-range" class="cost-range" type="range" min="1000" max="100000" step="1" value="20000" data-cost-range="budget"><div class="cost-range-limits" aria-hidden="true"><span>1 000 ₸</span><span>100 000 ₸</span></div><p id="cost-budget-help" class="cost-hint">Выберите свой ориентир. Тарифы подтвердит администратор.</p><p id="cost-budget-error" class="cost-error" role="status"></p></fieldset>
+          <fieldset data-cost-step hidden><legend class="cost-question" tabindex="-1">Что хотите обсудить с администратором?</legend><div id="cost-help" class="cost-choices cost-list-choices"></div><p class="cost-hint">Можно пропустить. Возможности и состав услуг уточним в переписке.</p><p id="cost-help-error" class="cost-error" role="status"></p></fieldset>
+          <fieldset data-cost-step hidden><legend class="cost-question" tabindex="-1">Что для вас особенно важно?</legend><div id="cost-priorities" class="cost-choices cost-list-choices"></div><p class="cost-hint">Выберите несколько пожеланий или переходите к результату.</p><p id="cost-priorities-error" class="cost-error" role="status"></p></fieldset>
+          <section data-cost-step class="cost-result" hidden aria-labelledby="cost-result-title"><h3 id="cost-result-title" class="cost-question" tabindex="-1">Ваш ориентир по бюджету</h3><p id="cost-total" class="cost-total"></p><p id="cost-formula" class="cost-formula"></p><p class="cost-result-note">Это ориентир по введённому бюджету. Меню и окончательную стоимость подтвердит администратор.</p><dl class="cost-summary"><div><dt>Событие</dt><dd id="cost-summary-event"></dd></div><div><dt>Дата</dt><dd id="cost-summary-date"></dd></div><div><dt>Обсудить</dt><dd id="cost-summary-help"></dd></div><div><dt>Важно</dt><dd id="cost-summary-priorities"></dd></div></dl></section>
+        </div>
+        <footer class="cost-actions"><button id="cost-back" type="button" class="button button-outline" hidden>Назад</button><button id="cost-next" type="submit" class="button button-primary"><span id="cost-next-label">Продолжить</span><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button></footer>
+      </form>
+    </div>
+  </dialog>
 
   <dialog id="message-dialog" class="message-dialog" aria-labelledby="message-title" aria-describedby="message-help">
     <div class="dialog-inner">
