@@ -40,6 +40,8 @@ The shared frame token is `--content-width:clamp(1280px,76vw,1920px)`: preserve 
 
 The featured hall uses a photo-first1.4:1 split, a2:1 photograph mask and vertically balanced copy. Its height follows image proportions and text, without a400px minimum. Constrain the photograph to its grid track so aspect ratio and stretched height cannot push it beneath the copy. Phone cards remain stacked with a3:2 photo. Do not add filler to occupy the text panel.
 
+The user's latest leveling correction turns the selected hero and matching hall preview1° clockwise. Apply this as CSS `rotate:1deg;scale:1.06` within the existing clipped containers, preserving the raster files and the hall's separate hover transform. The small enlargement covers the rotated corners at the verified320–2600px widths. The gallery original stays unchanged.
+
 Above760px the gallery is one1.4:.8:.8 row with a shared image height between280 and420px on ordinary desktop/tablet widths. At1700px and above, its image height grows with the frame (`.33 × content width`, up to634px), preserving portrait context rather than turning the wider tiles into shallow strips. The wide hero grows from740px to at most900px high, showing more of the room. On phones, one3:2 landscape photograph spans the width and two2:3 portraits sit below; caption rows grow with their text. Preserve native links, image failure recovery and the existing lightbox. At900px and below, enquiry and FAQ use the container's full width; the tablet enquiry introduction can keep two short columns and date/guest fields share a row. Phone text and fields return to one column. Reading/control type sizes and restrained motion are unchanged.
 
 ### Hall, media and content refinement
