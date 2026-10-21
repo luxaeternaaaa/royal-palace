@@ -81,19 +81,11 @@ $$('[data-hall]').forEach(link => link.addEventListener('click', () => {
   $('#hall').value = link.dataset.hall;
   clearFieldError('hall');
 }));
-function renderTopics() {
-  $('#enquiry-context').hidden = topics.size === 0;
-  $('#enquiry-question-text').textContent = topics.size ? t('topicsAdded', { topics: [...topics].map(topic => getPlannerCopy(locale).topics[topic]).join(' ') }) : '';
-}
 $$('[data-enquiry-topic]').forEach(link => link.addEventListener('click', () => {
   topics.add(link.dataset.enquiryTopic);
   if (link.dataset.enquiryTopic === 'guests') formDetails.open = true;
-  renderTopics();
 }));
 $$('[data-form-details]').forEach(link => link.addEventListener('click', () => { formDetails.open = true; }));
-$('#clear-enquiry-context').addEventListener('click', () => {
-  topics.clear(); renderTopics(); $('#event').focus();
-});
 
 const messageDialog = $('#message-dialog');
 const dialogOpeners = new WeakMap();
@@ -425,7 +417,6 @@ function applyLanguage(nextLocale) {
     costForm.querySelectorAll(`input[name="${name}"]`).forEach(input => { input.nextElementSibling.textContent = labels[input.value]; });
   });
   menuToggle.setAttribute('aria-label', t(mobileNav.hidden ? 'menuOpen' : 'menuClose'));
-  renderTopics();
   updateWishesCount();
   costNumber = numberFormatter(locale);
   renderCostText();

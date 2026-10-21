@@ -131,8 +131,6 @@ p { line-height: 1.75; }
 .enquiry-copy h2 em { color: var(--gold); }
 .enquiry-copy>p { max-width: 390px; margin-top: 25px; color: var(--muted); font-size: 17px; }
 .enquiry-copy>.button { justify-self: start; margin-top: 24px; }
-.direct-contact { margin: 0 0 24px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
-.direct-contact .text-link { font-size: 15px; color: var(--action-ink); gap: 10px; }
 .enquiry-form { min-width: 0; border: 1px solid var(--line); background: var(--surface); color: var(--ink); padding: 34px; border-radius: var(--radius-panel); scroll-margin-top: 0; }
 .form-details { margin-block: 0 22px; border-block: 1px solid var(--line); }
 .form-details summary { display: flex; align-items: center; justify-content: space-between; gap: 14px; min-height: 78px; padding-block: 17px; font-size: 16px; font-weight: 600; line-height: 1.5; list-style: none; }
@@ -142,11 +140,7 @@ p { line-height: 1.75; }
 .form-details[open] summary>.icon { transform: rotate(-90deg); }
 .form-details summary:hover { color: var(--focus); }
 .form-details-content { padding-block: 6px 4px; }
-.form-title { font: 400 30px/1.25 var(--display); letter-spacing: -.015em; }
-.form-intro { margin-top: 10px; margin-bottom: 12px; color: var(--muted); font-size: 15px; line-height: 1.7; }
-.enquiry-context { display: flex; align-items: start; gap: 6px; padding: 12px 0 16px; border-top: 1px solid var(--line); margin-bottom: 10px; }
-.enquiry-context p { flex: 1; font-size: 15px; color: var(--action-ink); }
-.enquiry-context .icon-button { margin-top: -6px; }
+.form-title { margin-bottom: 24px; font: 400 30px/1.25 var(--display); letter-spacing: -.015em; }
 .field { display: flex; flex-direction: column; min-width: 0; }
 .field>label { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 7px; margin-bottom: 9px; font-size: 15px; font-weight: 600; line-height: 1.6; }
 .field select, .field input:not([type=checkbox]), .field textarea { width: 100%; min-width: 0; min-height: 52px; padding: 12px 13px; border: 1px solid var(--control-border); border-radius: var(--radius-control); background: var(--surface); color: var(--ink); font-size: 16px; line-height: 1.6; caret-color: var(--action-ink); transition: border-color .2s; }
@@ -167,7 +161,6 @@ p { line-height: 1.75; }
 .form-status { color: var(--error); font-size: 15px; line-height: 1.7; }
 .form-status:not(:empty) { margin-bottom: 15px; }
 .prepare-button { justify-content: space-between; gap: 12px; width: 100%; }
-.form-help { margin-top: 15px; color: var(--muted); font-size: 15px; line-height: 1.75; }
 .noscript-help { margin-top: 18px; font-size: 15px; }
 .noscript-help a { text-decoration: underline; text-underline-offset: 3px; }
 .faq-grid { display: grid; grid-template-columns: .9fr 1.1fr; gap: 85px; }
@@ -451,15 +444,12 @@ dialog::backdrop { background: #241f1ad9; }
   .enquiry-copy h2 br { display: none; }
   .enquiry-copy>p { margin-top: 20px; max-width: none; font-size: 17px; }
   .enquiry-copy>.button { margin-top: 24px; }
-  .direct-contact .text-link { font-size: 15px; }
   .enquiry-form { padding: 26px 22px; scroll-margin-top: 0; }
   .form-title { font-size: 28px; }
-  .form-intro { font-size: 15px; margin-bottom: 12px; }
   .form-row { grid-template-columns: 1fr; gap: 0; }
   .field>label { font-size: 15px; }
   .field-error { font-size: 15px; }
   .prepare-button { font-size: 16px; padding-inline: 16px; }
-  .form-help { font-size: 15px; }
   .faq-grid { grid-template-columns: 1fr; gap: 30px; }
   .faq-intro { margin-top: 18px; font-size: 16px; }
   .faq-list summary { font-size: 18px; min-height: 76px; gap: 20px; }

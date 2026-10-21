@@ -121,9 +121,6 @@
         </div>
         <form id="enquiry-form" class="enquiry-form" novalidate>
           <h3 class="form-title" data-i18n="form.title">Детали праздника</h3>
-          <p class="form-intro" data-i18n="form.intro">Выберите событие. Остальные поля необязательны.</p>
-          <div class="direct-contact"><a href="https://wa.me/77715790555" target="_blank" rel="noopener noreferrer" class="text-link"><svg class="icon" aria-hidden="true"><use href="#i-whatsapp"/></svg> <span data-i18n="form.direct">Написать без формы</span></a></div>
-          <div id="enquiry-context" class="enquiry-context" hidden><p id="enquiry-question-text" aria-live="polite"></p><button id="clear-enquiry-context" type="button" class="icon-button" aria-label="Убрать добавленные вопросы" data-i18n-aria-label="form.clearAria"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button></div>
           <div class="field"><label for="event" data-i18n="form.event">Событие</label><div class="select-wrap"><select name="event" id="event" required aria-describedby="event-error"><option value="" data-i18n="form.chooseEvent">Выберите событие</option><option value="Свадьба" data-i18n="events.wedding">Свадьба</option><option value="Қыз ұзату" data-i18n="events.qyzUzatu">Қыз ұзату</option><option value="Юбилей" data-i18n="events.anniversary">Юбилей</option><option value="Семейное торжество" data-i18n="events.family">Семейное торжество</option><option value="Корпоративное событие" data-i18n="events.corporate">Корпоративное событие</option><option value="Другое событие" data-i18n="events.other">Другое событие</option></select></div><span id="event-error" class="field-error"></span></div>
           <details class="form-details" id="form-details"><summary><span><span data-i18n="form.details">Дополнительные детали</span><small data-i18n="form.detailsHint">Зал, дата, гости и пожелания</small></span><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></summary><div class="form-details-content">
           <div class="field"><label for="hall" data-i18n="form.hall">Зал</label><div class="select-wrap"><select name="hall" id="hall" aria-describedby="hall-error"><option value="help" data-i18n="form.helpHall">Помогите выбрать зал</option><option value="main" data-i18n="form.mainHall">Основной зал — до 550 мест</option><option value="middle" data-i18n="form.middleHall">Орта зал — до 144 мест</option><option value="small" data-i18n="form.smallHall">Кіші зал (малый)</option></select></div><span id="hall-error" class="field-error"></span></div>
@@ -135,7 +132,6 @@
           </div></details>
           <p id="form-status" class="form-status" role="status" aria-live="polite"></p>
           <button type="submit" class="button button-primary prepare-button" disabled><span data-i18n="form.preview">Посмотреть сообщение</span> <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
-          <p class="form-help" data-i18n="form.bookingNote">Бронирование даты — после согласования с администратором.</p>
           <p id="form-fallback" class="noscript-help"><span data-i18n="form.fallbackIntro">Подготовка сообщения пока недоступна.</span> <a href="https://wa.me/77715790555" target="_blank" rel="noopener noreferrer" data-i18n="form.fallbackWhatsapp">Напишите администратору в WhatsApp</a> <span data-i18n="form.fallbackPhone">или позвоните:</span> <a href="tel:+77715790555" data-i18n="contact.phone">+7 (771) 579-05-55</a>.</p>
         </form>
       </div>

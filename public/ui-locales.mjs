@@ -1,7 +1,6 @@
 export const UI_COPY = {
   ru: {
     language: 'Язык сайта', menuOpen: 'Открыть меню', menuClose: 'Закрыть меню',
-    topicsAdded: 'В сообщение добавим: {topics}',
     badDate: 'Проверьте дату: выберите её в календаре.', badGuests: 'Укажите число гостей цифрами, например 120.',
     checkFields: 'Проверьте отмеченные поля.', copy: 'Скопировать текст', copying: 'Копируем…', copied: 'Текст скопирован',
     copySuccess: 'Можно вставить его в переписку с администратором.',
@@ -20,7 +19,6 @@ export const UI_COPY = {
   },
   kk: {
     language: 'Сайт тілі', menuOpen: 'Мәзірді ашу', menuClose: 'Мәзірді жабу',
-    topicsAdded: 'Хабарламаға қосылады: {topics}',
     badDate: 'Күнді тексеріңіз: күнтізбеден таңдаңыз.', badGuests: 'Қонақ санын цифрмен жазыңыз, мысалы 120.',
     checkFields: 'Белгіленген өрістерді тексеріңіз.', copy: 'Мәтінді көшіру', copying: 'Көшірілуде…', copied: 'Мәтін көшірілді',
     copySuccess: 'Оны әкімшімен хат алмасуға қоюға болады.',
@@ -39,7 +37,6 @@ export const UI_COPY = {
   },
   en: {
     language: 'Site language', menuOpen: 'Open navigation', menuClose: 'Close navigation',
-    topicsAdded: 'We’ll add to your message: {topics}',
     badDate: 'Check the date: choose it from the calendar.', badGuests: 'Enter the number of guests using digits, for example 120.',
     checkFields: 'Please check the highlighted fields.', copy: 'Copy text', copying: 'Copying…', copied: 'Text copied',
     copySuccess: 'You can paste it into your conversation with the administrator.',
