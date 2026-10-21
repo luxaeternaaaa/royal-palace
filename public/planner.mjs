@@ -29,7 +29,7 @@ export function validateEnquiry(data, today = astanaToday()) {
   }
   const guests = String(data.guests ?? '').trim();
   if (!data.guestsUndecided && guests && (!/^\d{1,4}$/.test(guests) || Number(guests) < 1 || Number(guests) > 5000)) {
-    errors.guests = 'Проверьте число гостей: укажите целое положительное число, например 120.';
+    errors.guests = 'Укажите целое число гостей от 1 до 5000.';
   }
   if (String(data.wishes ?? '').length > 500) errors.wishes = 'Сократите пожелания до 500 символов.';
   return errors;

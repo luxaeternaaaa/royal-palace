@@ -145,7 +145,7 @@ form.addEventListener('submit', event => {
   if (Object.keys(errors).length) {
     if (Object.keys(errors).some(name => formDetails.contains($(`#${name}`)))) formDetails.open = true;
     Object.entries(errors).forEach(([name, text]) => { $(`#${name}`).setAttribute('aria-invalid', 'true'); $(`#${name}-error`).textContent = text; });
-    $('#form-status').textContent = 'Проверьте отмеченные поля. Дату и число гостей можно оставить пустыми.';
+    $('#form-status').textContent = 'Проверьте отмеченные поля.';
     const first = $(`#${Object.keys(errors)[0]}`);
     first.focus({ preventScroll: true });
     first.scrollIntoView({ block: 'center', behavior: reducedMotion() ? 'instant' : 'smooth' });
