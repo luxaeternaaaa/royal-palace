@@ -266,15 +266,17 @@ function updateSticky() {
   sticky.tabIndex = visible ? 0 : -1;
   sticky.setAttribute('aria-hidden', String(!visible));
 }
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.target.id === 'home') watched.hero = entry.isIntersecting;
-    if (entry.target.id === 'enquiry') watched.enquiry = entry.isIntersecting;
-    if (entry.target.id === 'contacts') watched.contacts = entry.isIntersecting;
-  });
-  updateSticky();
-}, { threshold: 0 });
-[$('#home'), $('#enquiry'), $('#contacts')].forEach(element => observer.observe(element));
+if (window.IntersectionObserver) {
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.target.id === 'home') watched.hero = entry.isIntersecting;
+      if (entry.target.id === 'enquiry') watched.enquiry = entry.isIntersecting;
+      if (entry.target.id === 'contacts') watched.contacts = entry.isIntersecting;
+    });
+    updateSticky();
+  }, { threshold: 0 });
+  [$('#home'), $('#enquiry'), $('#contacts')].forEach(element => observer.observe(element));
+}
 updateWishesCount();
 form.querySelector('[type=submit]').disabled = false;
 $('#form-fallback').hidden = true;
