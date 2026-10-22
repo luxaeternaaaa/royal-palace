@@ -1,8 +1,10 @@
-import { astanaToday, validateEnquiry, composeMessage, composeQuickMessage, whatsappUrl, getPlannerCopy } from './planner.mjs';
+import { astanaToday, validateEnquiry, composeMessage, composeQuickMessage, composeMenuMessage, whatsappUrl, getPlannerCopy } from './planner.mjs';
 import { validateCostStep, estimateBudget, composeCostMessage, getCostCopy } from './cost.mjs';
 import { LANGUAGES, normalizeLocale, numberFormatter, formatDate, preferredLocale } from './i18n.mjs';
 import { PAGE_COPY } from './page-locales.mjs';
 import { UI_COPY } from './ui-locales.mjs';
+import { MENUS } from './menu-data.mjs';
+import { getMenuSections, getMenuNotes, menuHall } from './menu-locales.mjs';
 
 const $ = selector => document.querySelector(selector);
 const $$ = selector => [...document.querySelectorAll(selector)];
@@ -56,7 +58,7 @@ document.addEventListener('pointerdown', event => {
 document.addEventListener('keydown', event => {
   if (event.key === 'Escape' && !mobileNav.hidden) { closeMenu(); menuToggle.focus(); }
 });
-window.matchMedia('(min-width: 761px)').addEventListener('change', event => {
+window.matchMedia('(min-width: 1101px)').addEventListener('change', event => {
   // CSS can blur desktop links before the breakpoint event reaches this handler.
   const active = document.activeElement === document.body ? (focusedHeaderControl || document.body) : document.activeElement;
   if (event.matches) {
@@ -360,7 +362,7 @@ $('#gallery-dialog').addEventListener('keydown', event => {
   if (event.key === 'ArrowRight') { event.preventDefault(); renderGallery(galleryIndex + 1); }
   if (event.key === 'ArrowLeft') { event.preventDefault(); renderGallery(galleryIndex - 1); }
 });
-$$('.gallery-item img, .hall-photo img').forEach(img => {
+$$('.gallery-item img, .hall-photo img, .menu-card img').forEach(img => {
   const showFailure = () => { img.parentElement.classList.add('photo-unavailable'); img.parentElement.querySelector('.photo-fallback').hidden = false; };
   img.addEventListener('load', () => {
     img.parentElement.classList.remove('photo-unavailable');
@@ -370,6 +372,95 @@ $$('.gallery-item img, .hall-photo img').forEach(img => {
   if (img.complete && !img.naturalWidth) showFailure();
 });
 window.addEventListener('resize', () => { if (galleryZoomed) setGalleryZoom(false); });
+
+const menuGroups = $$('[data-menu-group]');
+function selectServiceHall(hall) {
+  $$('[data-service-group]').forEach(group => { group.hidden = group.dataset.serviceGroup !== hall; });
+  $$('[data-service-filter]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.serviceFilter === hall)));
+  const link = $('#services-discuss');
+  link.dataset.quickHall = hall;
+  link.href = whatsappUrl(composeQuickMessage('services', hall, locale));
+}
+$$('[data-service-filter]').forEach(button => button.addEventListener('click', () => selectServiceHall(button.dataset.serviceFilter)));
+$$('.service-set-title').forEach(title => title.classList.add('sr-only'));
+selectServiceHall('main');
+$('.service-filters').hidden = false;
+$$('[data-menu-filter]').forEach(button => button.addEventListener('click', () => {
+  menuGroups.forEach(group => { group.hidden = group.dataset.menuGroup !== button.dataset.menuFilter; });
+  $$('[data-menu-filter]').forEach(filter => filter.setAttribute('aria-pressed', String(filter === button)));
+  if (button.dataset.menuFilter !== 'memorial') selectServiceHall(button.dataset.menuFilter);
+}));
+$$('.menu-set-title').forEach(title => title.classList.add('sr-only'));
+$('[data-menu-filter="main"]').click();
+$('.menu-filters').hidden = false;
+
+const menuViewer = $('#menu-viewer');
+const menuViewerStage = $('#menu-viewer-stage');
+let currentMenu = null;
+function updateMenuViewerCopy() {
+  if (!currentMenu) return;
+  $('#menu-viewer-title').textContent = menuHall(currentMenu.hall, locale);
+  $('#menu-viewer-prices').querySelectorAll('button').forEach(button => {
+    const offer = MENUS.find(menu => menu.id === button.dataset.menuOffer);
+    button.textContent = `${numberFormatter(locale).format(offer.price)} ₸`;
+    button.setAttribute('aria-pressed', String(offer === currentMenu));
+  });
+  const sections = getMenuSections(currentMenu, locale).map(category => {
+    const section = document.createElement('section');
+    const title = document.createElement('h3'); title.textContent = category.title;
+    const list = document.createElement('ul');
+    category.items.forEach(item => {
+      const li = document.createElement('li');
+      const name = document.createElement('span'); name.textContent = item.name;
+      li.append(name);
+      list.append(li);
+    });
+    section.append(title, list);
+    return section;
+  });
+  const columns = [sections.slice(0, 3), sections.slice(3)].map(sections => {
+    const column = document.createElement('div'); column.className = 'menu-reader-column';
+    column.append(...sections);
+    return column;
+  });
+  $('#menu-reader-sections').replaceChildren(...columns);
+  $('#menu-reader-notes').textContent = getMenuNotes(currentMenu, locale).join(' ');
+  $('#menu-reader-services').hidden = currentMenu.hall === 'memorial';
+}
+$$('[data-menu-viewer]').forEach(card => card.addEventListener('click', event => {
+  // Keep native open-in-new-tab and no-JavaScript image links available.
+  if (event.button || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+  event.preventDefault();
+  currentMenu = MENUS.find(menu => menu.id === card.dataset.menuId);
+  const prices = MENUS.filter(menu => menu.hall === currentMenu.hall).map(menu => {
+    const button = document.createElement('button');
+    button.type = 'button'; button.className = 'menu-filter'; button.dataset.menuOffer = menu.id;
+    button.addEventListener('click', () => {
+      currentMenu = menu;
+      updateMenuViewerCopy();
+      menuViewerStage.scrollTop = 0;
+    });
+    return button;
+  });
+  $('#menu-viewer-prices').replaceChildren(...prices);
+  updateMenuViewerCopy();
+  openDialog(menuViewer, card);
+  menuViewerStage.scrollTop = 0;
+  menuViewerStage.focus({ preventScroll: true });
+}));
+$('#menu-reader-discuss').addEventListener('click', event => {
+  const id = currentMenu.id;
+  showMessage(() => composeMenuMessage(id, locale), event.currentTarget, 'quick');
+});
+$('#menu-reader-services').addEventListener('click', event => {
+  event.preventDefault();
+  selectServiceHall(currentMenu.hall);
+  // The destination is outside the closing dialog, so restore focus there.
+  const destination = $(`[data-service-filter="${currentMenu.hall}"]`);
+  dialogOpeners.set(menuViewer, destination);
+  menuViewer.close();
+  $('#services').scrollIntoView({ block: 'start', behavior: reducedMotion() ? 'instant' : 'smooth' });
+});
 
 const sticky = $('.mobile-enquire');
 const watched = { hero: true, enquiry: false, contacts: false };
@@ -405,6 +496,7 @@ function applyLanguage(nextLocale) {
   languageSelect.title = t('language');
   const copy = PAGE_COPY[locale];
   $$('[data-i18n]').forEach(element => { element.textContent = copy[element.dataset.i18n]; });
+  $$('[data-menu-amount]').forEach(element => { element.textContent = `${numberFormatter(locale).format(Number(element.dataset.menuAmount))} ₸`; });
   ['placeholder', 'aria-label', 'alt', 'title', 'content'].forEach(attribute => {
     $$(`[data-i18n-${attribute}]`).forEach(element => {
       element.setAttribute(attribute, copy[element.getAttribute(`data-i18n-${attribute}`)]);
@@ -445,6 +537,7 @@ function applyLanguage(nextLocale) {
   $('#gallery-count').textContent = `${galleryIndex + 1} / ${gallery.length}`;
   $('#gallery-zoom').textContent = t(galleryZoomed ? 'zoomOut' : 'zoomIn');
   $('#gallery-image-message').textContent = t(galleryState === 'error' ? 'photoError' : 'photoLoading');
+  updateMenuViewerCopy();
 }
 languageSelect.addEventListener('change', () => {
   applyLanguage(languageSelect.value);

@@ -101,7 +101,7 @@ test('WhatsApp URL encodes Cyrillic and punctuation for the verified recipient',
 test('FAQ topics add relevant questions without replacing wishes or repeating a topic', () => {
   const message = composeMessage({ ...valid, wishes: 'Хочу сохранить эти пожелания', topics: ['menu', 'visit', 'menu', 'invalid'] });
   assert.match(message, /Пожелания: Хочу сохранить эти пожелания/);
-  assert.equal(message.match(/актуальное меню/g).length, 1);
+  assert.equal(message.match(/выбрать меню/g).length, 1);
   assert.match(message, /Хотим приехать посмотреть зал/);
   assert.doesNotMatch(message, /undefined|invalid/);
 });
@@ -124,8 +124,8 @@ test('quick menu request needs no event details and does not add a visit', () =>
   assert.equal(typeof planner.composeQuickMessage, 'function');
   const message = planner.composeQuickMessage('menu');
   assert.match(message, /^Здравствуйте, Royal Palace!/);
-  assert.match(message, /актуальное меню с ценами/);
-  assert.match(message, /Что входит в стоимость банкета\?/);
+  assert.match(message, /выбрать меню для нашего праздника/);
+  assert.match(message, /итоговую стоимость и условия оплаты оборудования и оформления/);
   assert.doesNotMatch(message, /Событие:|Дата:|Гостей:|торжества|просмотр|приехать|свободна ли дата/);
 });
 test('quick visit request contains only the requested viewing question', () => {

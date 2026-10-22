@@ -64,3 +64,14 @@ test('quick enquiries translate menu, viewing and exact hall requests without ad
     assert.throws(() => composeQuickMessage('constructor', 'help', locale), locale === 'kk' ? /тақырыбы белгісіз/ : /Unknown quick/);
   }
 });
+
+test('quick services enquiry asks only about equipment, décor and charges in each language', () => {
+  for (const locale of ['ru', 'kk', 'en']) {
+    const copy = getPlannerCopy(locale);
+    const message = composeQuickMessage('services', 'help', locale);
+    assert.ok(message.endsWith(`\n\n${copy.topics.services}`));
+    assert.match(message, locale === 'ru' ? /оборудование и оформление.*стоимость/s : locale === 'kk' ? /жабдығы мен безендірілуін.*бағасын/s : /equipment and décor.*cost/s);
+    assert.doesNotMatch(message, /меню|мәзір|menu|Событие:|Іс-шара:|Event:|Дата:|Күні:|Date:/i);
+    for (const topic of ['constructor', '__proto__', 'unknown']) assert.throws(() => composeQuickMessage(topic, 'help', locale), RangeError);
+  }
+});

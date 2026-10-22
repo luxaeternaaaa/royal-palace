@@ -1,10 +1,13 @@
-import { normalizeLocale as normalizeModelLocale, formatDate } from './i18n.mjs';
+import { normalizeLocale as normalizeModelLocale, formatDate, numberFormatter } from './i18n.mjs';
+import { MENUS } from './menu-data.mjs';
+import { getMenuTerms, menuHall } from './menu-locales.mjs';
 
 export const EVENTS = ['Свадьба', 'Қыз ұзату', 'Юбилей', 'Семейное торжество', 'Корпоративное событие', 'Другое событие'];
 export const HALLS = { help: 'Помогите выбрать зал', main: 'Основной зал', middle: 'Орта зал (средний)', small: 'Кіші зал (малый)' };
 export const ENQUIRY_TOPICS = {
   hall: 'Помогите, пожалуйста, подобрать зал для нашего праздника.',
-  menu: 'Пришлите, пожалуйста, актуальное меню с ценами. Что входит в стоимость банкета?',
+  menu: 'Помогите, пожалуйста, выбрать меню для нашего праздника. Уточните итоговую стоимость и условия оплаты оборудования и оформления.',
+  services: 'Хотим обсудить оборудование и оформление зала. Подскажите стоимость нужных нам услуг.',
   guests: 'Подскажите, какая рассадка подойдёт для нашего числа гостей.',
   visit: 'Хотим приехать посмотреть зал. Подскажите, когда это удобно?',
 };
@@ -29,7 +32,8 @@ const COPY = {
     halls: { help: 'Зал таңдауға көмектесіңіз', main: 'Негізгі зал', middle: 'Орта зал', small: 'Кіші зал' },
     topics: {
       hall: 'Мерекемізге лайық зал таңдауға көмектесіңізші.',
-      menu: 'Бағалары көрсетілген қазіргі мәзірді жіберіңізші. Банкет құнына не кіреді?',
+      menu: 'Мерекемізге мәзір таңдауға көмектесіңізші. Қорытынды соманы және жабдық пен безендіру ақысын нақтылаңызшы.',
+      services: 'Залдың жабдығы мен безендірілуін талқылағымыз келеді. Бізге қажет қызметтердің бағасын айтып беріңізші.',
       guests: 'Қонақтарымыздың санына сай үстелдерді орналастыру нұсқаларын ұсыныңызшы.',
       visit: 'Залды көруге келгіміз келеді. Қай уақытта келуге болады?',
     },
@@ -50,7 +54,8 @@ const COPY = {
     halls: { help: 'Help us choose a hall', main: 'Main hall', middle: 'Orta hall (medium)', small: 'Kishi hall (small)' },
     topics: {
       hall: 'Please help us choose a hall for our celebration.',
-      menu: 'Please send your current menu with prices. What does the banquet price include?',
+      menu: 'Please help us choose a menu for our celebration. Please confirm the final quote and the equipment and décor charges.',
+      services: 'Please tell us about equipment and décor options and the cost of the services we need.',
       guests: 'Please suggest seating arrangements for our guest count.',
       visit: 'We would like to visit the venue. When would be convenient?',
     },
@@ -130,7 +135,7 @@ export function composeMessage(data, locale = 'ru') {
 export function composeQuickMessage(topic, hall = 'help', locale = 'ru') {
   const copy = COPY[normalizeModelLocale(locale)];
   let question;
-  if (topic === 'menu' || topic === 'visit') question = copy.topics[topic];
+  if (topic === 'menu' || topic === 'services' || topic === 'visit') question = copy.topics[topic];
   else if (topic === 'hallPhotos') {
     if (hall !== 'help' && Object.hasOwn(copy.halls, hall)) {
       question = copy.hallPhotos(copy.halls[hall]);
@@ -139,7 +144,25 @@ export function composeQuickMessage(topic, hall = 'help', locale = 'ru') {
       question = copy.allPhotos([copy.halls.main, copy.halls.middle, copy.halls.small]);
     }
   } else throw new RangeError(copy.errors.quickTopic);
-  return `${copy.greeting}\n\n${question}`;
+  const hallContext = topic === 'services' && hall !== 'help' && Object.hasOwn(copy.halls, hall)
+    ? `${copy.labels.hall}: ${copy.halls[hall]}\n\n` : '';
+  return `${copy.greeting}\n\n${hallContext}${question}`;
+}
+
+export function composeMenuMessage(id, locale = 'ru') {
+  const menu = MENUS.find(menu => menu.id === id);
+  if (!menu) throw new RangeError('Unknown menu offer.');
+  const lang = normalizeModelLocale(locale);
+  const copy = COPY[lang];
+  const labels = {
+    ru: { menu: 'Меню', perGuest: 'на гостя', request: 'Хотим обсудить это меню.', quote: 'Подскажите итоговую стоимость и условия оплаты оборудования и оформления.' },
+    kk: { menu: 'Мәзір', perGuest: 'әр қонаққа', request: 'Осы мәзірді талқылағымыз келеді.', quote: 'Қорытынды соманы және жабдық пен безендіру ақысын нақтылаңызшы.' },
+    en: { menu: 'Menu', perGuest: 'per guest', request: 'We would like to discuss this menu.', quote: 'Please confirm the final quote and the equipment and décor charges.' },
+  }[lang];
+  return [copy.greeting, '', labels.request,
+    ...(menu.hall === 'memorial' ? [] : [`${copy.labels.hall}: ${copy.halls[menu.hall]}`]),
+    `${labels.menu}: ${menu.hall === 'memorial' ? `${menuHall('memorial', lang)} · ` : ''}${numberFormatter(lang).format(menu.price)} ₸ ${labels.perGuest}`,
+    getMenuTerms(menu, lang), '', labels.quote].join('\n');
 }
 
 export function whatsappUrl(message) {
