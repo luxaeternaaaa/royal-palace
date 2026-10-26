@@ -1,5 +1,9 @@
 # Royal Palace — design context
 
+## Design isolation correction · 26 October 2026
+
+The owner's latest correction confines all new first-screen work to Emerald II (`data-layout="halls"`). Milk and Emerald I restore the exact pre-hero visual baseline from10bb12f: the80/72px opaque header with authentic colored crest and wordmark, original heading/category/city, earlier hero photo/crop/height, address and photo-footer divider. Emerald II keeps the full-screen centered photograph, white crest, transparent104/88px header, Royal Palace heading, description and lower actions. `public/styles.css` owns the restored baseline; `public/hero-variant.css` scopes the modern first screen to the third design. Both image/copy variants are in semantic HTML with one H1; CSS exposes only the chosen variant. Lazy pictures and synchronous theme-aware preloads avoid fetching the hidden hero at first paint. No form/menu data or deployment cache protection is reverted. This section supersedes earlier statements that the modern hero/header is shared by all themes.
+
 ## Purpose
 Russian, Kazakh and English presentation website for families planning a celebration at Royal Palace, Astana, Chingiz Aitmatov 58. The single conversion is a prepared WhatsApp enquiry; no booking, backend, payment or automatic message sending.
 

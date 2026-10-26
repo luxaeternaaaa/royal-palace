@@ -16,7 +16,7 @@ test('mobile header stays in place and native navigation works while app.js is d
   try {
     await page.goto('/?lang=ru', { waitUntil: 'commit' });
     await appRequested;
-    await expect(page.locator('#header')).toHaveCSS('height', '88px');
+    await expect(page.locator('#header')).toHaveCSS('height', '72px');
     await page.evaluate(() => document.fonts.ready);
     const before = await page.evaluate(() => ({
       heroTop: document.querySelector('#home').getBoundingClientRect().top + scrollY,
