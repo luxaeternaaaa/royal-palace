@@ -181,3 +181,8 @@ Only `data-layout="halls"` combines contacts and footer navigation: desktop colu
 Use the public Yandex iframe widget for Royal Palace organization 103994893557, independently matched to the confirmed Astana address and phone. No SDK, API key, geolocation permission or recreated map is needed. Its source is held in `data-src` and assigned only in the third layout; native lazy loading defers loading until near the section. Leaving the layout removes `src`. Preserve provider attribution and the independent 2GIS link if the external widget cannot load. Localized iframe titles and all site labels support RU/KK/EN; the third-party map UI has its own language support.
 
 Sources: [Royal Palace Yandex listing](https://yandex.kz/maps/ru/org/royal_palace/103994893557/), [confirmed 2GIS listing](https://2gis.kz/astana/firm/70000001081186323), [Yandex widget instructions](https://yandex.ru/support/maps/ru/concept/get-map-reference.html). The Le Dome website was directly inspected for the photo-popup and footer interaction patterns; its content and assets are not copied.
+
+
+## GitHub Pages publication · 26 October 2026
+
+The user explicitly changed the repository decision to public so the primary site URL can use GitHub Pages rather than a ChatGPT hostname. Preserve the three designs and milk default. Build-only `PUBLIC_BASE_PATH` supports the repository path without modifying source asset routes or local preview. The Pages workflow publishes `dist` from `master` only after syntax, unit and build checks; official actions are pinned to verified commit SHAs. Do not publish project docs or development artifacts as website files.

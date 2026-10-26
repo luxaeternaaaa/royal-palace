@@ -1,11 +1,33 @@
-import { cp, lstat, readFile, realpath, rm, stat } from 'node:fs/promises';
-import { resolve, relative, sep } from 'node:path';
+import { cp, lstat, readFile, readdir, realpath, rm, stat, writeFile } from 'node:fs/promises';
+import { extname, resolve, relative, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { MENUS } from '../public/menu-data.mjs';
 import { VIDEOS } from '../public/media-data.mjs';
 import { getMenuAsset } from '../public/menu-locales.mjs';
 
-export async function copyPublicToDist(projectRoot) {
+export function normalizePublicBasePath(value = '') {
+  if (value === '' || value === '/') return '';
+  if (typeof value !== 'string' || !/^\/[A-Za-z0-9_-]+(?:\/[A-Za-z0-9_-]+)*\/?$/.test(value)) {
+    throw new Error('PUBLIC_BASE_PATH must be a local path with plain URL segments.');
+  }
+  return value.replace(/\/$/, '');
+}
+
+async function applyPublicBase(directory, basePath) {
+  for (const entry of await readdir(directory, { withFileTypes: true })) {
+    const path = resolve(directory, entry.name);
+    if (entry.isDirectory()) { await applyPublicBase(path, basePath); continue; }
+    if (!['.html', '.css', '.js', '.mjs'].includes(extname(path))) continue;
+    const source = await readFile(path, 'utf8');
+    // Protect complete external/data URLs; rewrite local asset URLs and root entry files only.
+    const built = source.replace(/(?:https?:)?\/\/[^\s"'`)]+|data:[^\s"'`)]+|([\s("'`,])\/(assets\/|[\w.-]+\.(?:css|m?js|html)(?=[\s"'`),?#]))/g,
+      (match, before, asset) => asset ? `${before}${basePath}/${asset}` : match);
+    if (built !== source) await writeFile(path, built);
+  }
+}
+
+export async function copyPublicToDist(projectRoot, { basePath = '' } = {}) {
+  const publicBase = normalizePublicBasePath(basePath);
   const root = await realpath(projectRoot);
   const dist = resolve(root, 'dist');
   try {
@@ -18,6 +40,7 @@ export async function copyPublicToDist(projectRoot) {
     if (error.code !== 'ENOENT') throw error;
   }
   await cp(resolve(root, 'public'), dist, { recursive: true });
+  if (publicBase) await applyPublicBase(dist, publicBase);
 }
 
 async function build() {
@@ -41,7 +64,7 @@ async function build() {
   for (const video of Object.values(VIDEOS)) for (const asset of [video.src, video.poster, video.mobileSrc].filter(Boolean)) {
     await stat(resolve(root, 'public', asset.slice(1)));
   }
-  await copyPublicToDist(root);
+  await copyPublicToDist(root, { basePath: process.env.PUBLIC_BASE_PATH });
   console.log('Built static website → dist/ (no runtime dependencies).');
 }
 
