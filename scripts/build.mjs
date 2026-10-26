@@ -1,6 +1,7 @@
 import { cp, lstat, readFile, readdir, realpath, rm, stat, writeFile } from 'node:fs/promises';
 import { extname, resolve, relative, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { createHash } from 'node:crypto';
 import { MENUS } from '../public/menu-data.mjs';
 import { VIDEOS } from '../public/media-data.mjs';
 import { getMenuAsset } from '../public/menu-locales.mjs';
@@ -43,6 +44,34 @@ export async function copyPublicToDist(projectRoot, { basePath = '' } = {}) {
   if (publicBase) await applyPublicBase(dist, publicBase);
 }
 
+export async function versionCodeAssets(directory) {
+  const files = [];
+  async function collect(folder) {
+    for (const entry of await readdir(folder, { withFileTypes: true })) {
+      const path = resolve(folder, entry.name);
+      if (entry.isDirectory()) await collect(path);
+      else if (['.html', '.css', '.js', '.mjs'].includes(extname(path))) {
+        files.push({ path, name: relative(directory, path).split(sep).join('/'), source: await readFile(path, 'utf8') });
+      }
+    }
+  }
+  await collect(directory);
+  files.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
+  const digest = createHash('sha256');
+  for (const file of files) digest.update(`${file.name}\0${file.source.replaceAll('\r\n', '\n')}\0`);
+  const version = digest.digest('hex').slice(0, 12);
+  for (const file of files) {
+    // Version imports too: a cached child module can overwrite new HTML with old copy.
+    const built = file.source.replace(/(?:https?:)?\/\/[^\s"'`)]+|data:[^\s"'`)]+|(["'(`])((?:\.{1,2}\/|\/(?!\/))[^"'`()<>\s]*?\.(?:css|m?js))(\?[^#"'`()<>\s]*)?(#[^"'`()<>\s]*)?(?=["'`)\s>])/g,
+      (match, before, path, query = '', fragment = '') => {
+        if (!before) return match;
+        return `${before}${path}${query ? `${query}&` : '?'}v=${version}${fragment}`;
+      });
+    if (built !== file.source) await writeFile(file.path, built);
+  }
+  return version;
+}
+
 async function build() {
   const root = resolve(import.meta.dirname, '..');
   const html = await readFile(resolve(root, 'public/index.html'), 'utf8');
@@ -65,6 +94,7 @@ async function build() {
     await stat(resolve(root, 'public', asset.slice(1)));
   }
   await copyPublicToDist(root, { basePath: process.env.PUBLIC_BASE_PATH });
+  await versionCodeAssets(resolve(root, 'dist'));
   console.log('Built static website → dist/ (no runtime dependencies).');
 }
 
