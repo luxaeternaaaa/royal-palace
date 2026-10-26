@@ -30,7 +30,7 @@ test('all language catalogues have matching complete keys and interpolation para
       assert.deepEqual(Object.keys(catalogue[language]).sort(), keys, language);
       for (const key of keys) {
         assert.equal(typeof catalogue[language][key], 'string', `${language}:${key}`);
-        if (!(catalogue === PAGE_COPY && language === 'kk' && key === 'hero.in')) assert.ok(catalogue[language][key].trim(), `${language}:${key}`);
+        assert.ok(catalogue[language][key].trim(), `${language}:${key}`);
         assert.deepEqual((catalogue[language][key].match(/\{\w+\}/g) || []).sort(), (catalogue.ru[key].match(/\{\w+\}/g) || []).sort(), `${language}:${key}`);
       }
     }

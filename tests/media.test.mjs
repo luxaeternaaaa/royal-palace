@@ -65,7 +65,7 @@ test('native video links preserve the exact menu mapping and do not preload medi
   assert.match(player, /preload="none"/);
   assert.doesNotMatch(player, /\bsrc=|\bautoplay\b/);
   assert.match(html, /data-menu-id="middle-38000"/);
-  assert.doesNotMatch(html, /data-video-menu="middle-38000"|data-i18n="hero.description"/);
+  assert.doesNotMatch(html, /data-video-menu="middle-38000"/);
 });
 
 test('enhanced video keeps native fallback and labelled keyboard controls', async () => {

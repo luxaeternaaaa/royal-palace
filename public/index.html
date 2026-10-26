@@ -8,8 +8,7 @@
   <meta name="robots" content="noindex, nofollow">
   <title data-i18n="meta.title">Royal Palace — банкетный ресторан в Астане</title>
   <link rel="icon" href="/assets/royal-palace-logo-original.jpg" type="image/jpeg">
-  <link rel="preload" as="image" type="image/avif" href="/assets/hero-mobile-1600.avif" imagesrcset="/assets/hero-mobile-800.avif 800w, /assets/hero-mobile-1600.avif 1600w" imagesizes="620px" media="(max-width: 600px)" fetchpriority="high">
-  <link rel="preload" as="image" href="/assets/venue-hero-restored-2k.webp" imagesrcset="/assets/venue-hero-restored-1280.webp 1280w, /assets/venue-hero-restored-2k.webp 2560w" imagesizes="(max-width: 760px) 1000px, 100vw" media="(min-width: 601px)" fetchpriority="high">
+  <link rel="preload" as="image" type="image/avif" href="/assets/hero-centered-1536.avif" imagesrcset="/assets/hero-centered-960.avif 960w, /assets/hero-centered-1536.avif 1536w" imagesizes="max(100vw, 150svh)" fetchpriority="high">
   <link rel="preload" as="font" href="/assets/fonts/forum-cyrillic.woff2" type="font/woff2" crossorigin>
   <link rel="preload" as="font" href="/assets/fonts/forum-latin.woff2" type="font/woff2" crossorigin>
   <link rel="preload" as="font" href="/assets/fonts/golos-text-cyrillic.woff2" type="font/woff2" crossorigin>
@@ -26,10 +25,7 @@
     <defs>
       <!-- Preserve the original mark: key out its green background without fading its artwork. -->
       <filter id="brand-background-removal" color-interpolation-filters="sRGB" x="0" y="0" width="100%" height="100%">
-        <feColorMatrix type="matrix" values="0 0 0 0 0.541176  0 0 0 0 0.415686  0 0 0 0 0.219608  1.2 0 0 0 -0.16"/>
-      </filter>
-      <filter id="brand-background-removal-emerald" color-interpolation-filters="sRGB" x="0" y="0" width="100%" height="100%">
-        <feColorMatrix type="matrix" values="0 0 0 0 0.023529  0 0 0 0 0.278431  0 0 0 0 0.203922  1.2 0 0 0 -0.16"/>
+        <feColorMatrix type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  1.2 0 0 0 -0.16"/>
       </filter>
       <filter id="menu-logo-emerald" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0.023529  0 0 0 0 0.278431  0 0 0 0 0.203922  0 0 0 1 0"/></filter>
       <!-- The extracted PDF crest already has transparency; preserve its alpha mask. -->
@@ -57,7 +53,6 @@
   <header class="site-header" id="header">
     <a href="#top" class="brand" aria-label="Royal Palace — главная" data-i18n-aria-label="brand.homeAria">
       <img class="brand-logo" src="/assets/royal-palace-logo-original.jpg" width="100" height="100" alt="Оригинальный логотип Royal Palace, Астана" data-i18n-alt="brand.logoAlt">
-      <span class="brand-type" data-i18n="brand.name">ROYAL PALACE</span>
     </a>
     <nav class="desktop-nav" aria-label="Основная навигация" data-i18n-aria-label="nav.mainAria">
       <a href="#halls" data-i18n="nav.halls">Залы</a><a href="#gallery" data-i18n="nav.photos">Фото</a><a href="#menu" data-i18n="nav.menu">Меню</a><a href="#services" data-i18n="nav.services">Услуги</a><a href="#contacts" data-i18n="nav.contacts">Контакты</a>
@@ -83,17 +78,16 @@
   </header>
   <main id="main">
     <section class="hero" id="home" aria-labelledby="hero-title">
-      <picture><source media="(max-width: 600px)" type="image/avif" srcset="/assets/hero-mobile-800.avif 800w, /assets/hero-mobile-1600.avif 1600w" sizes="620px"><source media="(max-width: 600px)" type="image/webp" srcset="/assets/hero-mobile-800.webp 800w, /assets/hero-mobile-1600.webp 1600w" sizes="620px"><img class="hero-image" src="/assets/venue-hero-restored-2k.webp" srcset="/assets/venue-hero-restored-1280.webp 1280w, /assets/venue-hero-restored-2k.webp 2560w" sizes="(max-width: 760px) 1000px, 100vw" alt="Большой зал Royal Palace в Астане — фото с AI-обработкой" width="2560" height="1704" fetchpriority="high" data-i18n-alt="hero.photoAlt"></picture>
+      <picture><source type="image/avif" srcset="/assets/hero-centered-960.avif 960w, /assets/hero-centered-1536.avif 1536w" sizes="max(100vw, 150svh)"><img class="hero-image" src="/assets/hero-centered-1536.webp" srcset="/assets/hero-centered-960.webp 960w, /assets/hero-centered-1536.webp 1536w" sizes="max(100vw, 150svh)" alt="Большой зал Royal Palace в Астане — фото с AI-обработкой" width="1536" height="1024" fetchpriority="high" data-i18n-alt="hero.photoAlt"></picture>
       <div class="hero-shade" aria-hidden="true"></div>
       <div class="hero-content container">
-          <h1 id="hero-title"><span data-i18n="hero.title">Банкетный ресторан</span><br><span data-i18n="hero.in">в</span> <em data-i18n="hero.city">Астане</em></h1>
+          <h1 id="hero-title" data-i18n="hero.title">Royal Palace</h1>
+          <p class="hero-description" data-i18n="hero.description">Банкетный ресторан в Астане для свадеб и семейных торжеств. Три зала, чтобы собрать тех, кто вам дорог.</p>
           <div class="hero-actions">
             <a class="button button-gold" href="#halls"><span data-i18n="hero.halls">Посмотреть залы</span> <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
             <a class="hero-gallery-link" href="#enquiry-form" data-i18n="nav.enquiry">Обсудить праздник</a>
           </div>
-          <a class="hero-address" href="https://2gis.kz/astana/firm/70000001081186323" target="_blank" rel="noopener noreferrer"><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg><span><span data-i18n="hero.address">Чингиза Айтматова, 58</span> <svg class="icon" aria-hidden="true"><use href="#i-diagonal"/></svg></span></a>
       </div>
-      <div class="hero-footer container"><a class="hero-photo" href="/assets/venue-hero.jpg" target="_blank" rel="noopener noreferrer" data-gallery="3" aria-label="Увеличить фотографию большого зала" data-i18n-aria-label="hero.zoomAria"><span data-i18n="photo.view">Посмотреть фото</span> <svg class="icon" aria-hidden="true"><use href="#i-zoom"/></svg></a></div>
     </section>
 
     <section id="halls" class="halls-section section-pad" aria-labelledby="halls-title">

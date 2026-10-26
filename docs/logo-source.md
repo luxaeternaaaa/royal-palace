@@ -18,6 +18,8 @@ The original JPG is displayed as a compact header mark and used directly as the 
 
 For header rendering, CSS applies the SVG filter `brand-background-removal`. At the user’s later milk/gold request, its output RGB matches readable antique gold (#7a531e), and its alpha is derived from the original image's red channel: the dark green source background becomes transparent while the crown, laurel, RP initials and lettering remain visible as an antique-gold mark on the milk header. This operates on the displayed image, not on the JPG file, and does not lower the opacity of the entire mark. The favicon continues to use the unchanged JPG directly.
 
+The owner's26October request supersedes that header-color treatment: the same alpha extraction now renders the original artwork in white over the full-screen photograph in all three designs. The separate ROYAL PALACE wordmark is removed; the authentic crest includes the name. Display box:96px desktop,76px phones,68px below380px. No logo generation, tracing, geometry changes or edits to the original JPG are involved.
+
 The current rendering was visually verified in Chrome at desktop and mobile widths and independently reviewed on 320px and 390px screens: the green square is absent and the original artwork remains visible on the light header; the later milk/gold pass changes only the filter’s output color. Screenshots: output/playwright/uiux-desktop-hero.png and uiux-mobile-hero.png.
 
 No public vector/high-resolution brand artwork was obtained. Request the original asset from the venue for large or print use. Public accessibility does not itself establish a republication license; this remains a local demo for the venue.

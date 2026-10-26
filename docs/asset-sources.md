@@ -53,7 +53,13 @@
 
 # Royal Palace demo: image and contact sources
 
-## Current hero: user's selected restored image — 21 October 2026
+## Current hero: exact owner attachment — 26 October 2026
+
+The owner supplied “ChatGPT Image 26 Oct 2026, 19_23_36.png” as the main-screen image and specifically asked to correct mobile centering. The full1536×1024PNG was visually inspected; no people were observed. SHA-256: `a0792ae9f4841c97f3002b4da1f47bb69a7415816f72ab08abbb91aa010294d5`.
+
+Delivery files `/assets/hero-centered-1536.avif` (199289bytes), `hero-centered-1536.webp` (346114bytes), `hero-centered-960.avif` (104192bytes) and `hero-centered-960.webp` (170056bytes) retain the entire3:2frame. Processing is only proportional resizing and encoding; no new retouch, color correction, rotation, crop or upscaling. The attachment is an AI-processed version of the venue photograph, not a newly obtained optical high-resolution original. Hero uses this same centered image across desktop and phone with `object-position:50% 50%`; earlier60%mobile derivatives and CSS rotation no longer apply to the hero. Original gallery files and existing hall-card images remain available. Local processing manifest: `output/hero-fullscreen/photo-source.json`.
+
+## Previous hero: user's selected restored image — 21 October 2026
 
 The user attached the previously shown brighter/sharper candidate and explicitly asked for that exact image as the main-page background. The earlier site had retained the ordinary source-faithful upscale; this was a different image-processing choice, not a reproduced cache failure. The user's latest selection supersedes the earlier candidate rejection below.
 

@@ -49,7 +49,7 @@ async function build() {
   for (const asset of ['styles.css', 'themes.css', 'theme-init.js', 'app.js', 'planner.mjs', 'cost.mjs', 'i18n.mjs', 'page-locales.mjs', 'ui-locales.mjs', 'menu-data.mjs', 'occasion-menu-data.mjs', 'occasion-menu-locales.mjs', 'menu-locales.mjs', 'assets/venue-hero-restored-2k.webp', 'assets/venue-hero-restored-1280.webp', 'assets/venue-hero.jpg', 'assets/venue-hall.jpg']) {
     await stat(resolve(root, 'public', asset));
   }
-  for (const asset of ['hero-mobile-800.avif', 'hero-mobile-1600.avif', 'hero-mobile-800.webp', 'hero-mobile-1600.webp', 'menu-crest.webp']) {
+  for (const asset of ['hero-centered-960.avif', 'hero-centered-1536.avif', 'hero-centered-960.webp', 'hero-centered-1536.webp', 'menu-crest.webp']) {
     await stat(resolve(root, 'public/assets', asset));
   }
   if (!html.includes('lang="ru"') || !html.includes('id="enquiry-form"')) throw new Error('Missing core page content.');

@@ -20,7 +20,6 @@ html[data-theme="emerald"] {
   --scroll-active: #f7faf7;
 }
 /* White working surfaces keep dark green reading and focus. */
-html[data-theme="emerald"] .site-header,
 html[data-theme="emerald"] .menu-viewer {
   color-scheme: light;
   --paper: #ffffff;
@@ -41,17 +40,14 @@ html[data-theme="emerald"] .menu-viewer {
   --scroll-hover: #064734;
   --scroll-active: #064734;
 }
-html[data-theme="emerald"] .brand-logo { filter: url(#brand-background-removal-emerald); }
 html[data-theme="emerald"] .menu-reader-brand img { filter: url(#menu-logo-emerald); }
 html[data-theme="emerald"] :is(.button-gold, .button-primary, .mobile-enquire) { color: #064734; border-color: transparent; }
 html[data-theme="emerald"] .menu-viewer :is(.button-gold, .button-primary) { color: #fff; }
 html[data-theme="emerald"] .button-outline:hover { background: #c4d8cd14; }
 html[data-theme="emerald"] .icon-button:hover { background: var(--champagne); }
 html[data-theme="emerald"] select option { background: var(--surface); color: var(--ink); }
-html[data-theme="emerald"] .site-header .language-select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='m1 1 4 4 4-4' fill='none' stroke='%23064734' stroke-width='1.2'/%3E%3C/svg%3E"); }
 html[data-theme="emerald"] .field input:disabled { background: #234c40; border-color: #72998a; color: #c4d8cd; }
-html[data-theme="emerald"] :is(.hero, .hero-address, .hall-photo > .gallery-label, .video-header, .video-controls, .video-loading, .video-error) { color: #f7faf7; }
-html[data-theme="emerald"] .hero-address:hover { color: #ffffff; }
+html[data-theme="emerald"] :is(.hall-photo > .gallery-label, .video-header, .video-controls, .video-loading, .video-error) { color: #f7faf7; }
 html[data-theme="emerald"] .hall-photo.photo-unavailable > .gallery-label { color: var(--action-ink); }
 html[data-theme="emerald"] .menu-cover { background: #fbf9f4; }
 @media (max-width: 1000px) and (orientation: landscape) and (max-height: 500px) {
@@ -60,7 +56,6 @@ html[data-theme="emerald"] .menu-cover { background: #fbf9f4; }
 }
 @media (forced-colors: active) {
   html[data-theme="emerald"],
-  html[data-theme="emerald"] .site-header,
   html[data-theme="emerald"] .menu-viewer {
     --paper: Canvas;
     --parchment: Canvas;
@@ -79,7 +74,7 @@ html[data-theme="emerald"] .menu-cover { background: #fbf9f4; }
     --scroll-hover: Highlight;
     --scroll-active: Highlight;
   }
-  html[data-theme="emerald"] :is(.button-gold, .button-primary, .mobile-enquire, .hero, .hero-address, .hall-photo > .gallery-label, .video-header, .video-controls, .video-loading, .video-error) { color: CanvasText; }
+  html[data-theme="emerald"] :is(.button-gold, .button-primary, .mobile-enquire, .hall-photo > .gallery-label, .video-header, .video-controls, .video-loading, .video-error) { color: CanvasText; }
   html[data-theme="emerald"] .menu-cover { background: Canvas; }
   html[data-theme="emerald"] .site-header .language-select { background-image: none; }
 }
