@@ -1,0 +1,190 @@
+/* Emerald II only. The other two designs keep their original tokens and layout.
+   Type sizes and spacing measured at ledome-banquet.kz, 26 October 2026.
+   Forum is Regular in the reference too; do not synthesize heavier outlines. */
+html[data-layout="halls"] {
+  color-scheme: light;
+  --body: 'Inter', Arial, sans-serif;
+  --paper: #ffffff;
+  --parchment: #ffffff;
+  --surface: #ffffff;
+  --champagne: #f4f6f3;
+  --ink: #171b18;
+  --muted: #5d665f;
+  --action-ink: #064734;
+  --accent-ink: #064734;
+  --gold: #064734;
+  --gold-hover: #105b45;
+  --gold-light: #ffffff;
+  --on-action: #ffffff;
+  --line: #dfe5df;
+  --control-border: #85968b;
+  --focus: #064734;
+  --error: #9e372c;
+  --scroll-thumb: #85968b;
+  --scroll-track: #ffffff;
+  --scroll-hover: #064734;
+  --scroll-active: #064734;
+}
+html[data-layout="halls"] :is(#halls, #contacts, .site-footer) {
+  --paper: #064734;
+  --parchment: #064734;
+  --surface: #0a503d;
+  --champagne: #105b45;
+  --ink: #ffffff;
+  --muted: #c4d8cd;
+  --action-ink: #ffffff;
+  --accent-ink: #c4d8cd;
+  --gold: #ffffff;
+  --gold-hover: #e8f0eb;
+  --on-action: #064734;
+  --line: #3e7963;
+  --control-border: #a0bfaf;
+  --focus: #dbebe1;
+  color: var(--ink);
+  background: var(--paper);
+}
+html[data-layout="halls"] body { font-size: 16px; line-height: 1.4; }
+html[data-layout="halls"] p { line-height: 1.4; }
+html[data-layout="halls"] ::selection { background: #c4d8cd; color: #064734; }
+html[data-layout="halls"] .container { width: calc(100% - 80px); }
+html[data-layout="halls"] .section-pad { padding-block: 60px; }
+html[data-layout="halls"] :is(.menu-section, .enquiry-section) { background: var(--paper); }
+html[data-layout="halls"] :is(.section-pad h2, .enquiry-copy h2) {
+  font: 400 60px/78px var(--display);
+  letter-spacing: -2px;
+  font-synthesis: none;
+}
+html[data-layout="halls"] .section-heading { gap: 20px; margin-bottom: 20px; }
+html[data-layout="halls"] .button {
+  min-height: 44px;
+  padding: 11px 20px;
+  font-size: 15px;
+  line-height: 1.55;
+  font-weight: 500;
+}
+html[data-layout="halls"] :is(.button-gold, .button-primary, .mobile-enquire) {
+  background: var(--gold);
+  color: var(--on-action);
+}
+html[data-layout="halls"] :is(.button-gold, .button-primary, .mobile-enquire):hover { background: var(--gold-hover); }
+html[data-layout="halls"] .text-link { font-size: 15px; line-height: 1.55; }
+html[data-layout="halls"] .site-header { padding-inline: max(40px, calc((100% - var(--content-width)) / 2)); }
+html[data-layout="halls"] .desktop-nav { font-size: 16px; gap: 24px; }
+html[data-layout="halls"] .menu-toggle > span { background: currentColor; }
+html[data-layout="halls"] .hero {
+  --gold: #ffffff;
+  --gold-hover: #e8f0eb;
+  --on-action: #064734;
+}
+html[data-layout="halls"] .hero-content { padding-bottom: 60px; }
+html[data-layout="halls"] .hero h1 {
+  max-width: 100%;
+  font-size: 120px;
+  line-height: 120px;
+  letter-spacing: -3px;
+  font-synthesis: none;
+}
+html[data-layout="halls"] .hero-description { max-width: 720px; margin-top: 15px; font-size: 20px; line-height: 28px; }
+html[data-layout="halls"] .hero-actions { margin-top: 30px; gap: 10px 30px; }
+html[data-layout="halls"] .hero-actions :is(.button, .hero-gallery-link) { min-height: 44px; font-size: 14px; line-height: 1.55; font-weight: 400; }
+html[data-layout="halls"] .hall-directory-grid { gap: 20px; margin-top: 20px; }
+html[data-layout="halls"] .hall-directory-card h3 { margin: 20px 84px 0 20px; font-size: 30px; line-height: 39px; letter-spacing: -1px; font-synthesis: none; }
+html[data-layout="halls"] .hall-directory-capacity { margin: 10px 84px 20px 20px; font-size: 16px; line-height: 22px; font-weight: 300; }
+html[data-layout="halls"] .hall-card-arrow { right: 20px; bottom: 20px; }
+html[data-layout="halls"] .menu-section-head { margin-bottom: 20px; gap: 15px 20px; }
+html[data-layout="halls"] :is(.menu-filters, .service-filters) { gap: 6px 20px; }
+html[data-layout="halls"] .menu-filter { min-height: 44px; font-size: 15px; line-height: 22px; }
+html[data-layout="halls"] .menu-grid { gap: 20px; }
+html[data-layout="halls"] .menu-card-price { font-size: 24px; line-height: 32px; }
+html[data-layout="halls"] .menu-card-price small { font-size: 12px; line-height: 18px; }
+html[data-layout="halls"] .menu-card-action { font-size: 15px; line-height: 23.25px; }
+html[data-layout="halls"] .services-context { font-size: 16px; line-height: 22px; }
+html[data-layout="halls"] .services-grid { gap: 20px; margin-top: 20px; }
+html[data-layout="halls"] .service-item { padding-top: 20px; }
+html[data-layout="halls"] .service-item h4 { font-size: 30px; line-height: 39px; letter-spacing: -1px; }
+html[data-layout="halls"] .service-item > p { margin-top: 10px; font-size: 16px; line-height: 22px; }
+html[data-layout="halls"] .service-item .service-price { margin-top: 20px; font-size: 24px; line-height: 32px; }
+html[data-layout="halls"] .services-action { margin-top: 20px; }
+html[data-layout="halls"] :is(.enquiry-grid, .faq-grid) { gap: 60px; }
+html[data-layout="halls"] .enquiry-copy { padding-top: 0; }
+html[data-layout="halls"] .enquiry-copy > p { margin-top: 10px; font-size: 16px; line-height: 22px; }
+html[data-layout="halls"] .enquiry-copy > .button { margin-top: 20px; }
+html[data-layout="halls"] .enquiry-form { padding: 24px; background: #f7f9f6; }
+html[data-layout="halls"] .field > label { font-size: 14px; line-height: 20px; }
+html[data-layout="halls"] .field input:disabled { background: #eef2ee; border-color: #85968b; color: #5d665f; }
+html[data-layout="halls"] .faq-list summary { min-height: 64px; padding-block: 18px; font-size: 16px; line-height: 24px; }
+html[data-layout="halls"] .contact-address { margin-top: 10px; font: 400 36px/43px Arial, sans-serif; letter-spacing: -1px; }
+html[data-layout="halls"] .contact-phone { display: inline-flex; align-items: center; min-height: 44px; margin-top: 10px; font-size: 36px; line-height: 50.4px; font-weight: 400; letter-spacing: -1px; }
+html[data-layout="halls"] #menu-reader-services { min-height: 44px; }
+html[data-layout="halls"] .contact-field-label { font-size: 13px; line-height: 20px; }
+html[data-layout="halls"] .visit-intro { margin-top: 10px; font-size: 14px; line-height: 20px; }
+html[data-layout="halls"] .contact-visit { margin-top: 20px; }
+html[data-layout="halls"] .contacts-grid { grid-template-columns: minmax(140px, .6fr) minmax(340px, 1.1fr) minmax(0, 1.4fr); gap: 40px; }
+html[data-layout="halls"] .contact-navigation nav a { font-size: 15px; }
+
+@media (max-width: 1100px) {
+  html[data-layout="halls"] .contacts-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 32px; }
+  html[data-layout="halls"] .contact-phone { font-size: 30px; }
+}
+@media (max-width: 760px) {
+  html[data-layout="halls"] body { font-size: 14px; line-height: 20px; }
+  html[data-layout="halls"] .container { width: calc(100% - 40px); }
+  html[data-layout="halls"] .section-pad { padding-block: 40px; }
+  html[data-layout="halls"] :is(.section-pad h2, .enquiry-copy h2) { font-size: 32px; line-height: 42px; letter-spacing: -1px; }
+  html[data-layout="halls"] .section-heading { margin-bottom: 15px; }
+  html[data-layout="halls"] .site-header { padding-inline: 20px; }
+  html[data-layout="halls"] .hero-content { padding-top: calc(var(--header-height) + 60px); padding-bottom: max(40px, env(safe-area-inset-bottom)); }
+  html[data-layout="halls"] .hero h1 { font-size: 60px; line-height: 60px; letter-spacing: -1.5px; }
+  html[data-layout="halls"] .hero-description { max-width: 350px; margin-top: 5px; font-size: 12px; line-height: 15px; }
+  html[data-layout="halls"] .hero-actions { margin-top: 20px; gap: 10px; }
+  html[data-layout="halls"] .hero-actions :is(.button, .hero-gallery-link) { font-size: 12px; line-height: 18.6px; }
+  html[data-layout="halls"] .hall-directory-grid { gap: 20px; margin-top: 15px; }
+  html[data-layout="halls"] .hall-directory-card h3 { font-size: 24px; line-height: 31px; }
+  html[data-layout="halls"] .hall-directory-capacity { font-size: 14px; line-height: 20px; }
+  html[data-layout="halls"] .menu-section-head { margin-bottom: 15px; }
+  html[data-layout="halls"] :is(.menu-filters, .service-filters) { gap: 4px 8px; }
+  html[data-layout="halls"] .menu-filters .menu-filter,
+  html[data-layout="halls"] .service-filters .menu-filter { font-size: 14px; line-height: 20px; }
+  html[data-layout="halls"] .menu-card-price { font-size: 22px; line-height: 28px; }
+  html[data-layout="halls"] .menu-card-action { font-size: 14px; line-height: 21.7px; }
+  html[data-layout="halls"] .services-context { font-size: 14px; line-height: 20px; }
+  html[data-layout="halls"] .service-item h4 { font-size: 24px; line-height: 31px; }
+  html[data-layout="halls"] .service-item > p { font-size: 14px; line-height: 20px; }
+  html[data-layout="halls"] .service-item .service-price { margin-top: 10px; font-size: 22px; line-height: 28px; }
+  html[data-layout="halls"] :is(.enquiry-grid, .faq-grid) { gap: 20px; }
+  html[data-layout="halls"] .enquiry-copy { display: block; }
+  html[data-layout="halls"] .enquiry-copy > p { margin-top: 10px; font-size: 14px; line-height: 20px; }
+  html[data-layout="halls"] .enquiry-copy > .button { margin-top: 10px; }
+  html[data-layout="halls"] .enquiry-form { padding: 20px; }
+  html[data-layout="halls"] .contacts-grid { grid-template-columns: minmax(0, 1fr); gap: 30px; }
+  html[data-layout="halls"] .contact-address { font-size: 26px; line-height: 31px; }
+  html[data-layout="halls"] .contact-phone { font-size: 26px; line-height: 36.4px; }
+  html[data-layout="halls"] #contact-phone-label { margin-top: 30px; }
+  html[data-layout="halls"] .contact-navigation nav a { font-size: 14px; }
+}
+@media (max-width: 380px) {
+  html[data-layout="halls"] .site-header { padding-inline: 12px; }
+}
+@media (max-height: 600px) and (min-width: 761px) {
+  html[data-layout="halls"] .hero h1 { font-size: 80px; line-height: 80px; }
+  html[data-layout="halls"] .hero-content { padding-bottom: 32px; }
+}
+@media (forced-colors: active) {
+  html[data-layout="halls"],
+  html[data-layout="halls"] :is(#halls, #contacts, .site-footer, .hero) {
+    --paper: Canvas;
+    --parchment: Canvas;
+    --surface: Canvas;
+    --champagne: Canvas;
+    --ink: CanvasText;
+    --muted: CanvasText;
+    --action-ink: LinkText;
+    --gold: ButtonFace;
+    --gold-hover: ButtonFace;
+    --on-action: ButtonText;
+    --line: ButtonText;
+    --control-border: ButtonText;
+    --focus: Highlight;
+  }
+  html[data-layout="halls"] .enquiry-form { background: Canvas; }
+}

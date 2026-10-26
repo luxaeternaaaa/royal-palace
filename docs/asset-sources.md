@@ -175,6 +175,12 @@ The eight unchanged WOFF2 subsets (Cyrillic-ext, Cyrillic, Latin-ext, Latin for 
 
 Both official source TTF files were inspected with fontTools: no missing characters in the Russian/Latin samples or `ӘәҒғҚқҢңӨөҰұҮүҺһІі`. The actual rendered WOFF2 checks and limits are recorded in `docs/verification.md`. Earlier Cormorant Garamond/Manrope files were removed from the current build; they remain recoverable in Git history. The typography work does not alter the authentic logo artwork or photographic source pixels.
 
+### Inter for Emerald II · 26 October 2026
+
+The owner's white/green experiment explicitly references [Le Dôme](https://ledome-banquet.kz/). Its reading family is Inter, verified from the live CSS and Chrome rendered-font data. Four unchanged variable WOFF2 subsets (Cyrillic-ext, Cyrillic, Latin-ext, Latin;178,032bytes total) were copied from the exact [Google Fonts stylesheet used there](https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&subset=latin,cyrillic). They are self-hosted through `public/assets/fonts/inter.css`; only Emerald II selects this family. Milk and Emerald I keep Golos Text, and existing printed menu images are unchanged.
+
+Font metadata: Version4.001;git-66647c0bb, weight axis100–900. fontTools cmap inspection confirmed all66Russian letters,18Kazakh-specific letters,52English letters and₸. The full SIL Open Font License1.1 from the [official Inter repository](https://github.com/rsms/inter/blob/v4.1/LICENSE.txt) is stored as `public/assets/fonts/inter-OFL.txt`. Download URLs, SHA-256 hashes and glyph checks are preserved in ignored `output/emerald-white/font-source.json`. No runtime Google Fonts request or font modification is involved.
+
 ## Original logo and user-confirmed halls
 
 The original 150px logo avatar comes from the [official Instagram](https://www.instagram.com/royal.palace.astana/), verified through the matching 2GIS contact and WhatsApp chain. It is used unchanged. Full evidence: `docs/logo-source.md`. The previously invented geometric RP mark and favicon have been removed.
