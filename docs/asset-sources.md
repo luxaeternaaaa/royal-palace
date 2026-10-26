@@ -1,3 +1,27 @@
+## Производные ресурсы для телефона · 25 октября 2026
+
+Новые `hero-mobile-{800,1600}.{avif,webp}` получены из существующего `venue-hero-restored-2k.webp`: область1600×1704 с координатами left576/top0 сохраняет прежнюю фокусную точку. Содержимое фотографии не генерировалось. `menu-crest.webp` — lossless-копия подлинного герба162×162. Полные исходники сохранены; воспроизводимая подготовка — `scripts/media/prepare-images.mjs`.
+
+Шесть `*-mobile.mp4` — полные производные от существующих подтверждённых роликов в `public/assets/videos/`, а не новые источники. H264/AAC, 720×1280, faststart; без обрезки кадров или длительности. Скрипт `scripts/media/prepare-mobile-videos.py` сохраняет SHA-256 исходников и производных, параметры, длительность, результат полного декодирования и SSIM в `output/deep-fixes/video/manifest.json`. Все шесть проверены по кадрам; смартфон получает уменьшенную копию, прямая ссылка открывает прежний полный MP4. Права и разрешения остаются теми же, что у исходных материалов.
+
+## Актуальный фон: однотонный зелёный · 23 октября 2026
+
+По последней просьбе пользователя все меховые/нитяные эксперименты отменены. Фон изумрудной темы — CSSцвет#064734. public/fiber-background.mjs,public/assets/textures/emerald-plush.webp и специфичный тест убраны из public/сборки и сохранены в игнорируемом output/solid-green/removed. Нет фонового изображения, декодирования илиCanvas. Все прежние записи о генерации ниже — история отвергнутых вариантов, не текущие ресурсы сайта. Подлинные фотографии зала, логотип и меню сохранены.
+
+## Архив: длинный ровный ворс · 23 октября 2026
+
+Последние уточнения пользователя: пышнее и гуще, все волокна вниз, без крупных волн/канавок/впадин, длиннее и качественнее, насыщенный тёмный изумруд с мягким загадочным блеском. Выбран последний вариант встроенного Imagegen. Это декоративная фотографическая фактура искусственного меха, а не изображение еды/зала/животного. Людей, объектов, логотипов и текста нет.
+
+Итог: public/assets/textures/emerald-plush.webp,1024×1536,410192байта, WebP quality92. Разрешение исходника сохранено; увеличения/уменьшения/кадрирования и ручной ретуши нет. Исходный PNG: C:/Users/foxal.DESKTOP-N1GCIEU/.codex/generated_images/01a15a8d-2dd8-7962-8bad-ff206f485439/exec-e720950a-01ec-4bbc-a4ee-db29e79b821d.png. Сводка задания и metadata: output/themes-v3/final-prompt.txt и texture-metadata.json. Предшествующие варианты с волнами/впадинами/коротким ворсом не публиковались в public. Убрана прежняя прототипная геометрия144нитей. Фактура движется только на боковых Canvas с программным отклонением≤2px и плавной маской; молочная тема её не загружает.
+
+## Архив: прототип из тонких волокон · 23 октября 2026
+
+По последней обратной связи растровая фактура меха убрана из public и сборки; архив сохранён только в игнорируемом output/themes-v2/rejected-fur.webp. Она больше не загружается и не используется. Новый фон — нативная Canvas2D-геометрия public/fiber-background.mjs:144 тонкие непрерывные нити на сторону, три пучка, детерминированные интервалы и спокойные блики,28-секундный цикл. Это декоративный материал интерфейса, без генерации/подмены еды, зала или логотипа. Никаких внешних assets/библиотек для фона нет. Прежняя запись ниже сохраняет историю отвергнутого варианта.
+
+## Архив: отвергнутая фактура изумрудной темы · 23 октября 2026
+
+`public/assets/textures/emerald-fur.webp` — декоративная фактура искусственного меха, созданная встроенным Imagegen по прямой просьбе пользователя для пробной зелёной темы. Это материал интерфейса, а не фотография зала, еды или настоящий мех. Нет людей, животных, букв и логотипов. Исходник: `.codex/generated_images/01a15a8d-2dd8-7962-8bad-ff206f485439/exec-e5164386-4652-462c-8d6c-253330e03004.png`; сохранён без изменений. Выполнено пропорциональное уменьшение1024×1536→768×1152 и WebP quality82:177232байта. Фактура доступна только на боковых декоративных полосах изумрудной темы. Сгенерированные фотографии блюд не возвращались.
+
 ## Редактура меню · 22 октября 2026
 
 Актуализация22октября2026: по последней просьбе пользователя все сгенерированные фотографии блюд убраны из сайта и сборки. Их прежняя атрибуция ниже — история; файлы сохранены только в игнорируемом output/menu-return/removed-food-*. Карточки показывают типографские листы из подтверждённых меню.
@@ -158,3 +182,10 @@ The following records the earlier research as it stood before the user's latest 
 The [official Instagram profile](https://www.instagram.com/royal.palace.astana/) publicly states up to **500 seated guests in the large hall** and **140 in the medium hall**, alongside the same Chingiz Aitmatov 58 address. The user's main/medium mapping establishes which names to use on this site. Public metadata was fetched twice without authentication; the final HTTP200 capture is saved at `output/assets-research/official-profile.txt`, fetched at 2026-10-20T19:26:54Z (21 October in Astana). The profile's edit date is unknown. The UI links to the profile and states that comfortable seating must be discussed for the event's guest count and format.
 
 2GIS's unallocated 550-person figure and Restoran.kz's general 500-person figure were not used to infer capacity for each hall. Restoran.kz's undated average-spend range of 10,000–50,000 KZT was not treated as an up-to-date banquet package. A current menu, reliably captioned medium/small-hall photos and first-party team/service material were not available in this bounded search. Small-hall capacity remains unknown.
+
+
+## Centered large-hall cover · 26 October 2026
+
+The user explicitly requested removal of the 2GIS mark, a level composition and a centered image. `public/assets/hall-main-centered.webp` is a retouched derivative of `public/assets/venue-hero.webp`, produced with the built-in ImageGen editing tool. The raw owner-album source is preserved. This derivative is used only for the Emerald II card and its first hall-view photo; the legacy original-photo routes remain unchanged.
+
+Edit brief: remove the lower-right 2GIS text, straighten the camera roll and center the stage/aisle; preserve the real venue, tables, lighting and photographic appearance, without adding people or new objects. Treat the resulting asset as a retouched photograph rather than an untouched camera original. Generated PNG: 1536×1024; WebP export: quality 94, 496244 bytes. The website uses centered 4:3 framing with no CSS rotation and shows the complete derivative in the hall viewer.

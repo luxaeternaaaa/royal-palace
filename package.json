@@ -8,8 +8,15 @@
     "dev": "node scripts/serve.mjs",
     "start": "node scripts/serve.mjs",
     "build": "node scripts/build.mjs",
-    "test": "node --test tests/*.test.mjs",
-    "check": "node --check public/app.js && node --check public/i18n.mjs && node --check public/page-locales.mjs && node --check public/ui-locales.mjs && node --check public/menu-data.mjs && node --check public/menu-locales.mjs && node --check public/planner.mjs && node --check public/cost.mjs && node --check public/motion.mjs && node --check scripts/serve.mjs && node --check scripts/build.mjs"
+    "test": "npm run test:unit && npm run test:browser",
+    "test:unit": "node --test tests/*.test.mjs",
+    "test:browser": "playwright test",
+    "check": "node --check public/app.js && node --check public/theme-init.js && node --check public/i18n.mjs && node --check public/page-locales.mjs && node --check public/ui-locales.mjs && node --check public/menu-data.mjs && node --check public/occasion-menu-data.mjs && node --check public/occasion-menu-locales.mjs && node --check public/media-data.mjs && node --check public/menu-locales.mjs && node --check public/planner.mjs && node --check public/cost.mjs && node --check public/motion.mjs && node --check scripts/serve.mjs && node --check scripts/build.mjs"
   },
-  "engines": { "node": ">=22" }
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1"
+  }
 }

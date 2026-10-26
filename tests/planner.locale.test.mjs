@@ -1,9 +1,26 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { EVENTS, HALLS, ENQUIRY_TOPICS, getPlannerCopy, validateEnquiry, composeMessage, composeQuickMessage, whatsappUrl } from '../public/planner.mjs';
+import { menuHall } from '../public/menu-locales.mjs';
+import { PAGE_COPY } from '../public/page-locales.mjs';
 
 const today = '2026-10-21';
 const draft = { event: 'Свадьба', hall: 'main', date: '2099-11-21', guests: '144', wishes: 'Әжемізге ыңғайлы орын. Keep this exact: <&>.' };
+
+test('menu sheets and enquiries use the same hall names in the selected language', () => {
+  const names = {
+    ru: ['Большой зал', 'Средний зал', 'Малый зал'],
+    kk: ['Үлкен зал', 'Орта зал', 'Кіші зал'],
+    en: ['Large hall', 'Medium hall', 'Small hall'],
+  };
+  for (const [locale, expected] of Object.entries(names)) {
+    for (const [index, hall] of ['main', 'middle', 'small'].entries()) {
+      assert.equal(menuHall(hall, locale), expected[index]);
+      assert.equal(getPlannerCopy(locale).halls[hall], menuHall(hall, locale));
+      assert.ok(PAGE_COPY[locale][`form.${hall}Hall`].startsWith(`${expected[index]} — `));
+    }
+  }
+});
 
 test('localized labels preserve stored event/hall/topic keys and safely fall back to Russian', () => {
   for (const locale of ['kk', 'en']) {
@@ -12,7 +29,7 @@ test('localized labels preserve stored event/hall/topic keys and safely fall bac
     assert.deepEqual(Object.keys(copy.halls), Object.keys(HALLS));
     assert.deepEqual(Object.keys(copy.topics), Object.keys(ENQUIRY_TOPICS));
   }
-  assert.equal(getPlannerCopy('kk').halls.main, 'Негізгі зал');
+  assert.equal(getPlannerCopy('kk').halls.main, 'Үлкен зал');
   assert.equal(getPlannerCopy('en').events['Свадьба'], 'Wedding');
   assert.equal(getPlannerCopy('en').events['Юбилей'], 'Milestone celebration');
   for (const locale of ['constructor', '__proto__', 'toString', 'en-GB', '', null, {}, 1]) assert.deepEqual(getPlannerCopy(locale), getPlannerCopy('ru'));
@@ -32,8 +49,8 @@ test('validation translates all enquiry fields and distinguishes invalid dates f
 test('messages localize event, hall and calendar date while retaining arbitrary wishes verbatim', () => {
   const kk = composeMessage(draft, 'kk');
   const en = composeMessage(draft, 'en');
-  assert.match(kk, /^Сәлеметсіз бе, Royal Palace!/); assert.match(kk, /Іс-шара: Үйлену тойы/); assert.match(kk, /Зал: Негізгі зал/); assert.match(kk, /Күні: 2099 ж\. 21 қараша/);
-  assert.match(en, /^Hello, Royal Palace!/); assert.match(en, /Event: Wedding/); assert.match(en, /Hall: Main hall/); assert.match(en, /Date: 21 November 2099/);
+  assert.match(kk, /^Сәлеметсіз бе, Royal Palace!/); assert.match(kk, /Іс-шара: Үйлену тойы/); assert.match(kk, /Зал: Үлкен зал/); assert.match(kk, /Күні: 2099 ж\. 21 қараша/);
+  assert.match(en, /^Hello, Royal Palace!/); assert.match(en, /Event: Wedding/); assert.match(en, /Hall: Large hall/); assert.match(en, /Date: 21 November 2099/);
   assert.ok(kk.includes(`Тілектер: ${draft.wishes}`)); assert.ok(en.includes(`Preferences: ${draft.wishes}`));
   assert.equal(new URL(whatsappUrl(kk)).searchParams.get('text'), kk);
 });

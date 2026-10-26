@@ -31,7 +31,7 @@ test('all language catalogues have matching complete keys and interpolation para
       for (const key of keys) {
         assert.equal(typeof catalogue[language][key], 'string', `${language}:${key}`);
         if (!(catalogue === PAGE_COPY && language === 'kk' && key === 'hero.in')) assert.ok(catalogue[language][key].trim(), `${language}:${key}`);
-        assert.deepEqual(catalogue[language][key].match(/\{\w+\}/g), catalogue.ru[key].match(/\{\w+\}/g), `${language}:${key}`);
+        assert.deepEqual((catalogue[language][key].match(/\{\w+\}/g) || []).sort(), (catalogue.ru[key].match(/\{\w+\}/g) || []).sort(), `${language}:${key}`);
       }
     }
   }
@@ -42,4 +42,13 @@ test('every static translation binding resolves in all three languages', async (
   const keys = [...html.matchAll(/data-i18n(?:-(?:placeholder|aria-label|alt|title|content))?="([^"]+)"/g)].map(match => match[1]);
   assert.ok(keys.length > 100, 'the page, forms and dialogs must all be localized');
   for (const key of keys) for (const language of ['ru', 'kk', 'en']) assert.ok(Object.hasOwn(PAGE_COPY[language], key), `${language}:${key}`);
+});
+
+test('form restructuring keeps unique IDs and valid accessible descriptions', async () => {
+  const html = await readFile(new URL('../public/index.html', import.meta.url), 'utf8');
+  const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
+  assert.equal(new Set(ids).size, ids.length, 'duplicate IDs can submit a different field than the visitor filled');
+  for (const [, references] of html.matchAll(/aria-describedby="([^"]+)"/g)) {
+    for (const id of references.split(' ')) assert.ok(ids.includes(id), `missing description: ${id}`);
+  }
 });

@@ -1,10 +1,11 @@
 import { astanaToday, validateEnquiry, composeMessage, composeQuickMessage, composeMenuMessage, whatsappUrl, getPlannerCopy } from './planner.mjs';
-import { validateCostStep, estimateBudget, composeCostMessage, getCostCopy } from './cost.mjs';
-import { LANGUAGES, normalizeLocale, numberFormatter, formatDate, preferredLocale } from './i18n.mjs';
+import { validateBudget, estimateBudget, composeCostMessage } from './cost.mjs';
+import { normalizeLocale, numberFormatter, preferredLocale } from './i18n.mjs';
 import { PAGE_COPY } from './page-locales.mjs';
 import { UI_COPY } from './ui-locales.mjs';
 import { MENUS } from './menu-data.mjs';
-import { getMenuSections, getMenuNotes, menuHall } from './menu-locales.mjs';
+import { VIDEOS, MENU_VIDEOS } from './media-data.mjs';
+import { getMenuSections, getMenuFooterNotes, getMenuAsset, getMenuCollection, getMenuTitle, menuHall } from './menu-locales.mjs';
 
 const $ = selector => document.querySelector(selector);
 const $$ = selector => [...document.querySelectorAll(selector)];
@@ -16,34 +17,70 @@ const form = $('#enquiry-form');
 const formDetails = $('#form-details');
 const dateField = $('#date');
 const header = $('#header');
+const mobileMenu = $('#mobile-menu');
 const menuToggle = $('.menu-toggle');
 const mobileNav = $('#mobile-nav');
-const languageSelect = document.createElement('select');
-languageSelect.id = 'language-select';
-languageSelect.className = 'language-select';
-Object.entries(LANGUAGES).forEach(([value, name]) => {
-  const option = document.createElement('option');
-  option.value = value; option.textContent = { ru: 'RU', kk: 'ҚАЗ', en: 'EN' }[value];
-  option.lang = value; option.title = name;
-  languageSelect.append(option);
-});
-header.insertBefore(languageSelect, menuToggle);
+const themePicker = $('#theme-picker');
+const themeToggle = $('#theme-toggle');
+const themeOptions = $('#theme-options');
+const themeColors = { classic: '#fbf9f4', emerald: '#064734', 'emerald-halls': '#064734' };
+let theme = document.documentElement.dataset.layout === 'halls' ? 'emerald-halls' : document.documentElement.dataset.theme === 'emerald' ? 'emerald' : 'classic';
+const languageSelect = $('#language-select');
 let focusedHeaderControl = null;
 const topics = new Set();
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 dateField.min = astanaToday();
 
+function updateThemeControl() {
+  const copy = PAGE_COPY[locale];
+  const label = `${copy['theme.label']}: ${copy[`theme.${theme}`]}`;
+  themeToggle.setAttribute('aria-label', label);
+  themeToggle.title = label;
+  $$('[data-theme-choice]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.themeChoice === theme)));
+}
+function closeThemePicker() {
+  themeToggle.setAttribute('aria-expanded', 'false');
+  themeOptions.hidden = true;
+}
+themeToggle.addEventListener('click', () => {
+  const open = themeOptions.hidden;
+  closeMenu();
+  themeToggle.setAttribute('aria-expanded', String(open));
+  themeOptions.hidden = !open;
+});
+$$('[data-theme-choice]').forEach(button => button.addEventListener('click', () => {
+  const next = button.dataset.themeChoice;
+  if (!Object.hasOwn(themeColors, next)) return;
+  theme = next;
+  if (theme !== 'classic') document.documentElement.dataset.theme = 'emerald';
+  else delete document.documentElement.dataset.theme;
+  if (theme === 'emerald-halls') document.documentElement.dataset.layout = 'halls';
+  else delete document.documentElement.dataset.layout;
+  $('meta[name="theme-color"]').content = themeColors[theme];
+  applyHallLayout();
+  updateThemeControl();
+  try { localStorage.setItem('royal-palace-theme', theme); } catch { /* The current page still changes without storage. */ }
+  closeThemePicker();
+  if (theme !== 'emerald-halls' || location.hash !== '#gallery') themeToggle.focus({ preventScroll: true });
+}));
+themePicker.addEventListener('focusout', event => {
+  if (event.relatedTarget && !themePicker.contains(event.relatedTarget)) closeThemePicker();
+});
+themeToggle.disabled = false;
+languageSelect.disabled = false;
+
 function closeMenu() {
+  closeThemePicker();
   menuToggle.setAttribute('aria-expanded', 'false');
   menuToggle.setAttribute('aria-label', t('menuOpen'));
-  mobileNav.hidden = true;
+  mobileMenu.open = false;
   header.classList.remove('menu-open');
 }
-menuToggle.addEventListener('click', () => {
-  const open = menuToggle.getAttribute('aria-expanded') !== 'true';
+mobileMenu.addEventListener('toggle', () => {
+  const open = mobileMenu.open;
+  if (open) closeThemePicker();
   menuToggle.setAttribute('aria-expanded', String(open));
   menuToggle.setAttribute('aria-label', t(open ? 'menuClose' : 'menuOpen'));
-  mobileNav.hidden = !open;
   header.classList.toggle('menu-open', open);
 });
 mobileNav.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
@@ -52,13 +89,16 @@ header.addEventListener('focusout', event => {
   if (event.relatedTarget && !header.contains(event.relatedTarget)) closeMenu();
 });
 document.addEventListener('pointerdown', event => {
+  if (!themePicker.contains(event.target)) closeThemePicker();
   if (!header.contains(event.target)) focusedHeaderControl = null;
-  if (!mobileNav.hidden && !header.contains(event.target)) closeMenu();
+  if (mobileMenu.open && !header.contains(event.target)) closeMenu();
 });
 document.addEventListener('keydown', event => {
-  if (event.key === 'Escape' && !mobileNav.hidden) { closeMenu(); menuToggle.focus(); }
+  if (event.key !== 'Escape') return;
+  if (!themeOptions.hidden) { closeThemePicker(); themeToggle.focus(); }
+  else if (mobileMenu.open) { closeMenu(); menuToggle.focus(); }
 });
-window.matchMedia('(min-width: 1101px)').addEventListener('change', event => {
+window.matchMedia('(min-width: 1241px)').addEventListener('change', event => {
   // CSS can blur desktop links before the breakpoint event reaches this handler.
   const active = document.activeElement === document.body ? (focusedHeaderControl || document.body) : document.activeElement;
   if (event.matches) {
@@ -199,85 +239,37 @@ $('#copy-message').addEventListener('click', async () => {
 
 const costDialog = $('#cost-dialog');
 const costForm = $('#cost-form');
-const costSteps = $$('[data-cost-step]');
-const costFields = ['event', 'date', 'guests', 'budget', 'help', 'priorities'];
+const costFields = ['guests', 'budget'];
 let costNumber = numberFormatter(locale);
-let costStep = 0;
-
-function addCostChoices(container, name, choices, type = 'radio') {
-  Object.entries(choices).forEach(([value, title]) => {
-    const label = document.createElement('label');
-    label.className = 'cost-choice';
-    const input = document.createElement('input');
-    input.type = type; input.name = name; input.value = value;
-    input.setAttribute('aria-describedby', `cost-${name}-error`);
-    const text = document.createElement('span'); text.textContent = title;
-    label.append(input, text); container.append(label);
-  });
-}
-addCostChoices($('#cost-events'), 'event', getPlannerCopy(locale).events);
-addCostChoices($('#cost-help'), 'help', getCostCopy(locale).help);
-addCostChoices($('#cost-priorities'), 'priorities', getCostCopy(locale).priorities, 'checkbox');
 function costData() {
-  const values = new FormData(costForm);
-  return Object.fromEntries([...costFields.map(name => [name, values.get(name) ?? '']), ['priorities', values.getAll('priorities')]]);
+  return Object.fromEntries(new FormData(costForm));
 }
 function clearCostError(name) {
   costForm.querySelectorAll(`[name="${name}"]`).forEach(input => input.removeAttribute('aria-invalid'));
   $(`#cost-${name}-error`).textContent = '';
 }
 function renderCostText() {
-  $('#cost-step-count').textContent = t('step', { step: costStep + 1 });
-  $('#cost-progress').setAttribute('aria-valuetext', t('step', { step: costStep + 1 }));
-  $('#cost-next-label').textContent = t(costStep === 6 ? 'discussCost' : costStep === 5 ? 'showCost' : 'next');
-  if (costStep === 6) {
-    const data = costData();
+  const data = costData();
+  const valid = !Object.keys(validateBudget(data, locale)).length && costFields.every(name => costForm.elements[name].validity.valid);
+  $('#cost-total').textContent = '—';
+  $('#cost-formula').textContent = '';
+  if (valid) {
     $('#cost-total').textContent = `${costNumber.format(estimateBudget(data.guests, data.budget))} ₸`;
     $('#cost-formula').textContent = t('formula', { guests: costNumber.format(Number(data.guests)), budget: costNumber.format(Number(data.budget)) });
-    $('#cost-summary-event').textContent = getPlannerCopy(locale).events[data.event];
-    $('#cost-summary-date').textContent = data.date ? formatDate(data.date, locale) : t('dateUndecided');
-    $('#cost-summary-help').textContent = getCostCopy(locale).help[data.help] || t('helpUndecided');
-    $('#cost-summary-priorities').textContent = data.priorities.map(key => getCostCopy(locale).priorities[key]).join(', ') || t('prioritiesUndecided');
   }
 }
-function renderCostStep(index, focus = true) {
-  costStep = index;
-  costSteps.forEach((step, i) => { step.hidden = i !== index; });
-  $('#cost-progress').setAttribute('aria-valuenow', String(index + 1));
-  $('#cost-progress-fill').style.width = `${(index + 1) / 7 * 100}%`;
-  $('#cost-back').hidden = index === 0;
-  renderCostText();
-  costDialog.scrollTop = 0;
-  if (focus) costSteps[index].querySelector('.cost-question').focus({ preventScroll: true });
-}
 $$('[data-cost-open]').forEach(link => link.addEventListener('click', event => {
-  event.preventDefault(); $('#cost-date').min = astanaToday();
-  openDialog(costDialog, link); renderCostStep(costStep);
+  event.preventDefault(); renderCostText(); openDialog(costDialog, link);
+  $('#cost-guests').focus({ preventScroll: true });
 }));
-$('#cost-back').addEventListener('click', () => renderCostStep(costStep - 1));
-const rangeUpdaters = [];
-$$('[data-cost-range]').forEach(range => {
-  const number = $(`#cost-${range.dataset.costRange}`);
-  const syncRange = () => {
-    if (number.value !== '' && number.validity.valid) range.value = number.value;
-    range.style.setProperty('--range-fill', `${(Number(range.value) - Number(range.min)) / (Number(range.max) - Number(range.min)) * 100}%`);
-    range.setAttribute('aria-valuetext', t(range.dataset.costRange === 'budget' ? 'rangeBudget' : 'rangeGuests', { value: costNumber.format(Number(range.value)) }));
-  };
-  rangeUpdaters.push(syncRange);
-  range.addEventListener('input', () => { number.value = range.value; clearCostError(number.name); syncRange(); });
-  number.addEventListener('input', syncRange); syncRange();
-});
-costForm.addEventListener('input', event => { if (costFields.includes(event.target.name)) clearCostError(event.target.name); });
+costForm.addEventListener('input', event => { clearCostError(event.target.name); renderCostText(); });
 costForm.addEventListener('submit', event => {
   event.preventDefault();
   const data = costData();
-  const errors = validateCostStep(costStep, data, undefined, locale);
-  if (costStep === 5) Object.assign(errors, validateCostStep(6, data, undefined, locale));
-  if ((costStep === 1 || costStep >= 5) && $('#cost-date').validity.badInput) errors.date = t('badDate');
+  const errors = validateBudget(data, locale);
   costFields.forEach(clearCostError);
   const firstError = Object.keys(errors)[0];
   if (firstError) {
-    renderCostStep(costFields.indexOf(firstError), false);
     Object.entries(errors).forEach(([name, text]) => {
       $(`#cost-${name}-error`).textContent = text;
       costForm.querySelectorAll(`[name="${name}"]`).forEach(input => input.setAttribute('aria-invalid', 'true'));
@@ -286,8 +278,7 @@ costForm.addEventListener('submit', event => {
     input.focus({ preventScroll: true }); input.scrollIntoView({ block: 'center', behavior: 'instant' });
     return;
   }
-  if (costStep < 6) renderCostStep(costStep + 1);
-  else showMessage(() => composeCostMessage(data, locale), $('#cost-next'), 'cost');
+  showMessage(() => composeCostMessage(data, locale), $('#cost-next'), 'cost');
 });
 
 const gallery = [
@@ -315,7 +306,7 @@ function setGalleryZoom(zoomed) {
 }
 function renderGallery(index, retry = false) {
   galleryIndex = (index + gallery.length) % gallery.length;
-  const item = gallery[galleryIndex];
+  const item = activeHall === 'main' && galleryIndex === 3 ? { src: '/assets/hall-main-centered.webp' } : gallery[galleryIndex];
   setGalleryZoom(false);
   galleryImage.hidden = true;
   $('#gallery-image-status').hidden = false;
@@ -346,10 +337,12 @@ function renderGallery(index, retry = false) {
   galleryImage.src = `${item.src}${retry ? `?retry=${Date.now()}` : ''}`;
   $('#gallery-original').href = item.src;
   $('#lightbox-caption').textContent = t(`gallery.caption.${galleryIndex}`);
-  $('#gallery-count').textContent = `${galleryIndex + 1} / ${gallery.length}`;
+  $('#gallery-count').textContent = `${(activeHall === 'main' ? (galleryIndex + 1) % gallery.length : galleryIndex) + 1} / ${gallery.length}`;
 }
 $$('[data-gallery]').forEach(button => button.addEventListener('click', event => {
   event.preventDefault();
+  activeHall = null;
+  updateHallDetail();
   renderGallery(Number(button.dataset.gallery), button.classList.contains('photo-unavailable'));
   openDialog($('#gallery-dialog'), button);
 }));
@@ -358,7 +351,7 @@ $('#gallery-next').addEventListener('click', () => renderGallery(galleryIndex + 
 $('#gallery-retry').addEventListener('click', () => renderGallery(galleryIndex, true));
 $('#gallery-zoom').addEventListener('click', () => setGalleryZoom(!galleryZoomed));
 $('#gallery-dialog').addEventListener('keydown', event => {
-  if (galleryZoomed && event.target === stage) return;
+  if ((activeHall && activeHall !== 'main') || (galleryZoomed && event.target === stage)) return;
   if (event.key === 'ArrowRight') { event.preventDefault(); renderGallery(galleryIndex + 1); }
   if (event.key === 'ArrowLeft') { event.preventDefault(); renderGallery(galleryIndex - 1); }
 });
@@ -374,6 +367,16 @@ $$('.gallery-item img, .hall-photo img, .menu-card img').forEach(img => {
 window.addEventListener('resize', () => { if (galleryZoomed) setGalleryZoom(false); });
 
 const menuGroups = $$('[data-menu-group]');
+function updateMenuAssets() {
+  $$('[data-menu-id]').forEach(card => {
+    const menu = MENUS.find(menu => menu.id === card.dataset.menuId);
+    card.href = getMenuAsset(menu, locale);
+    card.querySelector('img').src = getMenuAsset(menu, locale, 'preview');
+  });
+  $$('[data-menu-footnotes]').forEach(text => {
+    text.textContent = getMenuFooterNotes(MENUS.find(menu => menu.id === text.dataset.menuFootnotes), locale).join(' ');
+  });
+}
 function selectServiceHall(hall) {
   $$('[data-service-group]').forEach(group => { group.hidden = group.dataset.serviceGroup !== hall; });
   $$('[data-service-filter]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.serviceFilter === hall)));
@@ -385,21 +388,169 @@ $$('[data-service-filter]').forEach(button => button.addEventListener('click', (
 $$('.service-set-title').forEach(title => title.classList.add('sr-only'));
 selectServiceHall('main');
 $('.service-filters').hidden = false;
+let selectedMenuHall = 'main';
+const menuKind = $('#menu-kind');
+function selectMenuGroup() {
+  const usesHall = menuKind.value === 'banquet' || menuKind.value === 'newyear';
+  menuGroups.forEach(group => {
+    group.hidden = group.dataset.menuKind !== menuKind.value || (usesHall && group.dataset.menuHall !== selectedMenuHall);
+  });
+  $$('[data-menu-filter]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.menuFilter === selectedMenuHall)));
+  $('.menu-filters').hidden = !usesHall;
+  if (usesHall) selectServiceHall(selectedMenuHall);
+}
 $$('[data-menu-filter]').forEach(button => button.addEventListener('click', () => {
-  menuGroups.forEach(group => { group.hidden = group.dataset.menuGroup !== button.dataset.menuFilter; });
-  $$('[data-menu-filter]').forEach(filter => filter.setAttribute('aria-pressed', String(filter === button)));
-  if (button.dataset.menuFilter !== 'memorial') selectServiceHall(button.dataset.menuFilter);
+  selectedMenuHall = button.dataset.menuFilter;
+  selectMenuGroup();
 }));
+menuKind.addEventListener('change', selectMenuGroup);
 $$('.menu-set-title').forEach(title => title.classList.add('sr-only'));
-$('[data-menu-filter="main"]').click();
-$('.menu-filters').hidden = false;
+selectMenuGroup();
+$('#menu-kind-control').hidden = false;
+
+const hallDirectory = $('#hall-directory');
+const hallDetail = $('#hall-detail');
+const hallGallery = $('#gallery');
+const hallDialog = $('#gallery-dialog');
+const contactCopy = $('.contact-copy');
+const contactLinks = $('.contact-links');
+const contactRoute = $('.contact-copy > .text-link');
+const contactMap = $('#contact-map');
+const venueMap = $('#venue-map');
+let activeHall = null;
+$$('.hall-card-photo img').forEach(image => {
+  const fallback = image.nextElementSibling;
+  const showFallback = () => { image.hidden = true; fallback.hidden = false; };
+  image.addEventListener('error', showFallback);
+  image.addEventListener('load', () => { image.hidden = false; fallback.hidden = true; });
+  if (image.complete && !image.naturalWidth) showFallback();
+});
+
+function updateHallDetail() {
+  const selected = !!activeHall;
+  $$('[data-hall-view]').forEach(button => button.setAttribute('aria-expanded', String(button.dataset.hallView === activeHall)));
+  hallDetail.hidden = !selected;
+  hallDialog.classList.toggle('hall-view', selected);
+  $('.lightbox-brand').hidden = selected;
+  $('.lightbox-tools').hidden = selected;
+  $('.lightbox-bottom').hidden = selected && activeHall !== 'main';
+  $('#gallery-prev').disabled = selected && activeHall !== 'main';
+  $('#gallery-next').disabled = selected && activeHall !== 'main';
+  $('#lightbox-caption').hidden = selected;
+  $('#hall-actions').hidden = !selected;
+  $('#hall-gallery-videos').hidden = activeHall !== 'main';
+  $('#hall-detail-visit').hidden = !selected || activeHall === 'main';
+  if (!selected) return;
+  const copy = PAGE_COPY[locale];
+  $('#hall-detail-title').textContent = copy[`halls.${activeHall}`];
+  $('#hall-detail-capacity').textContent = `${copy[`halls.${activeHall}Capacity`]} ${copy['halls.seats']}`;
+  $('#hall-enquire').dataset.hall = activeHall;
+  if (activeHall !== 'main') $('#gallery-image-message').textContent = copy['halls.noPhoto'];
+}
+
+function openHallGallery(hall, opener) {
+  activeHall = hall;
+  updateHallDetail();
+  if (hall === 'main') renderGallery(3);
+  else {
+    setGalleryZoom(false);
+    galleryImage.onload = null;
+    galleryImage.onerror = null;
+    galleryImage.removeAttribute('src');
+    galleryImage.hidden = true;
+    galleryState = 'empty';
+    $('#gallery-image-status').hidden = false;
+    $('#gallery-image-message').textContent = PAGE_COPY[locale]['halls.noPhoto'];
+    $('#gallery-retry').hidden = true;
+    $('#gallery-zoom').disabled = true;
+  }
+  if (!hallDialog.open) openDialog(hallDialog, opener);
+}
+
+function applyHallLayout() {
+  const enabled = theme === 'emerald-halls';
+  $('#legacy-halls').hidden = enabled;
+  hallDirectory.hidden = !enabled;
+  $('#halls').setAttribute('aria-labelledby', enabled ? 'hall-directory-title' : 'halls-title');
+  $$('.desktop-nav a[href="#gallery"], .mobile-nav a[href="#gallery"]').forEach(link => { link.hidden = enabled; });
+  $('#contact-navigation').hidden = !enabled;
+  contactMap.hidden = !enabled;
+  $('.contact-photo').hidden = enabled;
+  $('#contacts-title').classList.toggle('sr-only', enabled);
+  $('#contact-address-label').hidden = !enabled;
+  $('#contact-phone-label').hidden = !enabled;
+  if (enabled) {
+    $('#contact-socials').append(contactLinks);
+    $('#contact-map-route').append(contactRoute);
+    if (!venueMap.hasAttribute('src')) venueMap.src = venueMap.dataset.src;
+  } else {
+    contactCopy.append(contactRoute, contactLinks);
+    venueMap.removeAttribute('src');
+  }
+  hallGallery.hidden = enabled;
+  if (!enabled) {
+    if (activeHall && hallDialog.open) hallDialog.close();
+    activeHall = null;
+  }
+  updateHallDetail();
+  restoreGalleryAnchor();
+}
+
+function restoreGalleryAnchor() {
+  if (theme !== 'emerald-halls' || location.hash !== '#gallery') return;
+  openHallGallery('main', $('[data-hall-view="main"]'));
+}
+window.addEventListener('hashchange', restoreGalleryAnchor);
+
+$$('[data-hall-view]').forEach(button => button.addEventListener('click', () => {
+  openHallGallery(button.dataset.hallView, button);
+}));
+hallDialog.addEventListener('close', () => {
+  if (!activeHall) return;
+  activeHall = null;
+  if (location.hash === '#gallery') {
+    const url = new URL(location.href);
+    url.hash = 'halls';
+    history.replaceState(null, '', url);
+  }
+  updateHallDetail();
+});
+$('#hall-menu').addEventListener('click', () => {
+  if (!activeHall) return;
+  selectedMenuHall = activeHall;
+  if (!['banquet', 'newyear'].includes(menuKind.value)) menuKind.value = 'banquet';
+  selectMenuGroup();
+  dialogOpeners.set(hallDialog, $(`[data-menu-filter="${selectedMenuHall}"]`));
+  hallDialog.close();
+});
+$('#hall-enquire').addEventListener('click', () => {
+  dialogOpeners.set(hallDialog, $('#event'));
+  hallDialog.close();
+});
+applyHallLayout();
 
 const menuViewer = $('#menu-viewer');
 const menuViewerStage = $('#menu-viewer-stage');
 let currentMenu = null;
 function updateMenuViewerCopy() {
   if (!currentMenu) return;
-  $('#menu-viewer-title').textContent = menuHall(currentMenu.hall, locale);
+  const videoLink = $('#menu-reader-video');
+  const videoId = MENU_VIDEOS[currentMenu.id];
+  videoLink.hidden = !videoId;
+  if (videoId) {
+    videoLink.href = VIDEOS[videoId].src;
+    videoLink.dataset.video = videoId; videoLink.dataset.videoMenu = currentMenu.id;
+  } else {
+    videoLink.removeAttribute('href');
+    delete videoLink.dataset.video; delete videoLink.dataset.videoMenu;
+  }
+  const title = $('#menu-viewer-title');
+  title.textContent = getMenuTitle(currentMenu, locale);
+  if (currentMenu.occasion === 'newyear') {
+    const hall = document.createElement('span'); hall.className = 'menu-reader-hall';
+    hall.textContent = menuHall(currentMenu.hall, locale);
+    title.replaceChildren(document.createTextNode(PAGE_COPY[locale]['menu.newyear'] + ' '), hall);
+  }
   $('#menu-viewer-prices').querySelectorAll('button').forEach(button => {
     const offer = MENUS.find(menu => menu.id === button.dataset.menuOffer);
     button.textContent = `${numberFormatter(locale).format(offer.price)} ₸`;
@@ -424,15 +575,15 @@ function updateMenuViewerCopy() {
     return column;
   });
   $('#menu-reader-sections').replaceChildren(...columns);
-  $('#menu-reader-notes').textContent = getMenuNotes(currentMenu, locale).join(' ');
-  $('#menu-reader-services').hidden = currentMenu.hall === 'memorial';
+  $('#menu-reader-notes').textContent = getMenuFooterNotes(currentMenu, locale).join(' ');
+  $('#menu-reader-services').hidden = !['main', 'middle', 'small'].includes(currentMenu.hall) || currentMenu.servicesIncluded;
 }
 $$('[data-menu-viewer]').forEach(card => card.addEventListener('click', event => {
   // Keep native open-in-new-tab and no-JavaScript image links available.
   if (event.button || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
   event.preventDefault();
   currentMenu = MENUS.find(menu => menu.id === card.dataset.menuId);
-  const prices = MENUS.filter(menu => menu.hall === currentMenu.hall).map(menu => {
+  const prices = MENUS.filter(menu => getMenuCollection(menu) === getMenuCollection(currentMenu)).map(menu => {
     const button = document.createElement('button');
     button.type = 'button'; button.className = 'menu-filter'; button.dataset.menuOffer = menu.id;
     button.addEventListener('click', () => {
@@ -462,6 +613,167 @@ $('#menu-reader-services').addEventListener('click', event => {
   $('#services').scrollIntoView({ block: 'start', behavior: reducedMotion() ? 'instant' : 'smooth' });
 });
 
+const videoDialog = $('#video-dialog');
+const videoPlayer = $('#venue-video');
+const videoControls = $('#video-controls');
+const videoSeek = $('#video-seek');
+const videoVolume = $('#video-volume');
+let lastVideoVolume = videoPlayer.volume || 1;
+let canSetVideoVolume = false;
+try {
+  const probe = document.createElement('video');
+  probe.volume = .5;
+  canSetVideoVolume = probe.volume === .5;
+} catch { /* Some devices reserve media volume for their system controls. */ }
+videoVolume.hidden = !canSetVideoVolume;
+$('#video-device-volume').hidden = canSetVideoVolume;
+let videoVersion = 0;
+let videoScrubbing = false;
+let videoSeekTarget = null;
+let appliedVideoSeek = null;
+let activeVideo = null;
+function videoTime(seconds) {
+  const total = Number.isFinite(seconds) ? Math.max(0, Math.floor(seconds)) : 0;
+  return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`;
+}
+function updateVideoControls() {
+  const copy = PAGE_COPY[locale];
+  const playing = !videoPlayer.paused && !videoPlayer.ended && !videoPlayer.error;
+  const muted = videoPlayer.muted || videoPlayer.volume === 0;
+  const duration = Number.isFinite(videoPlayer.duration) ? videoPlayer.duration : 0;
+  $('#video-toggle').setAttribute('aria-label', copy[playing ? 'media.pause' : 'media.play']);
+  $('#video-toggle use').setAttribute('href', playing ? '#i-pause' : '#i-play');
+  $('#video-mute').setAttribute('aria-label', copy[muted ? 'media.unmute' : 'media.mute']);
+  $('#video-mute use').setAttribute('href', muted ? '#i-muted' : '#i-sound');
+  if (videoPlayer.volume > 0) lastVideoVolume = videoPlayer.volume;
+  const volume = videoPlayer.muted ? 0 : videoPlayer.volume;
+  videoVolume.value = String(volume);
+  videoVolume.setAttribute('aria-valuetext', `${Math.round(volume * 100)}%`);
+  videoVolume.style.setProperty('--video-progress', `${volume * 100}%`);
+  videoSeek.disabled = duration <= 0 || !!videoPlayer.error;
+  videoSeek.max = String(duration || 1);
+  if (!videoScrubbing) videoSeek.value = String(videoSeekTarget ?? (videoPlayer.currentTime || 0));
+  const current = videoTime(Number(videoSeek.value));
+  const total = videoTime(duration);
+  videoSeek.setAttribute('aria-valuetext', copy['media.time'].replace('{current}', current).replace('{duration}', total));
+  videoSeek.style.setProperty('--video-progress', `${duration ? Number(videoSeek.value) / duration * 100 : 0}%`);
+  $('#video-time').textContent = `${current} / ${total}`;
+}
+function videoWaiting(waiting) {
+  $('#video-loading').hidden = !waiting;
+  $('.video-stage').setAttribute('aria-busy', String(waiting));
+}
+async function toggleVideo() {
+  if (!videoPlayer.paused && !videoPlayer.ended && !videoPlayer.error) { videoPlayer.pause(); return; }
+  const version = videoVersion;
+  $('#video-error').hidden = true;
+  if (videoPlayer.error) videoPlayer.load();
+  if (videoPlayer.ended) videoPlayer.currentTime = 0;
+  try { await videoPlayer.play(); }
+  catch (error) {
+    if (error.name !== 'AbortError' && videoDialog.open && version === videoVersion) {
+      videoWaiting(false);
+      $('#video-error').hidden = error.name === 'NotAllowedError';
+      updateVideoControls();
+    }
+  }
+}
+$('#video-toggle').addEventListener('click', toggleVideo);
+videoPlayer.addEventListener('click', toggleVideo);
+$('#video-mute').addEventListener('click', () => {
+  const muted = videoPlayer.muted || videoPlayer.volume === 0;
+  if (canSetVideoVolume && videoPlayer.volume === 0) videoPlayer.volume = lastVideoVolume;
+  videoPlayer.muted = !muted;
+  updateVideoControls();
+});
+videoVolume.addEventListener('input', () => {
+  if (!canSetVideoVolume) return;
+  videoPlayer.volume = Number(videoVolume.value);
+  videoPlayer.muted = videoPlayer.volume === 0;
+  updateVideoControls();
+});
+videoSeek.addEventListener('pointerdown', () => { videoScrubbing = true; });
+function applyVideoSeek() {
+  if (videoSeekTarget === null || videoPlayer.seeking) return;
+  appliedVideoSeek = videoSeekTarget;
+  videoPlayer.currentTime = videoSeekTarget;
+}
+videoSeek.addEventListener('input', () => {
+  if (!videoSeek.disabled) { videoSeekTarget = Number(videoSeek.value); applyVideoSeek(); }
+  updateVideoControls();
+});
+videoPlayer.addEventListener('seeked', () => {
+  // WebKit can drop a new currentTime assignment while its previous seek is pending.
+  if (videoSeekTarget !== null && videoSeekTarget !== appliedVideoSeek) applyVideoSeek();
+  else videoSeekTarget = appliedVideoSeek = null;
+  updateVideoControls();
+});
+function finishVideoSeek() { videoScrubbing = false; updateVideoControls(); }
+['change', 'pointerup', 'pointercancel', 'lostpointercapture', 'blur'].forEach(name => videoSeek.addEventListener(name, finishVideoSeek));
+['timeupdate', 'durationchange', 'loadedmetadata', 'play', 'pause', 'ended', 'volumechange', 'emptied'].forEach(name => videoPlayer.addEventListener(name, updateVideoControls));
+videoPlayer.addEventListener('loadstart', () => videoWaiting(videoDialog.open && videoPlayer.hasAttribute('src')));
+videoPlayer.addEventListener('waiting', () => videoWaiting(videoDialog.open && !videoPlayer.paused));
+videoPlayer.addEventListener('loadedmetadata', () => {
+  const ratio = videoPlayer.videoWidth / videoPlayer.videoHeight;
+  if (!Number.isFinite(ratio) || ratio <= 0) return;
+  videoDialog.classList.toggle('is-landscape', ratio > 1);
+  videoDialog.style.setProperty('--source-ratio', String(ratio));
+});
+['canplay', 'playing', 'pause', 'emptied'].forEach(name => videoPlayer.addEventListener(name, () => videoWaiting(false)));
+videoPlayer.controls = false;
+videoControls.hidden = false;
+function updateVideoCopy() {
+  if (!activeVideo) return;
+  const menu = MENUS.find(menu => menu.id === activeVideo.menuId);
+  $('#video-title').textContent = menu ? menuHall(menu.hall, locale) : PAGE_COPY[locale][VIDEOS[activeVideo.id].title];
+  $('#video-context').textContent = menu ? `${numberFormatter(locale).format(menu.price)} ₸ ${PAGE_COPY[locale]['menu.perGuest']}` : '';
+  $('#video-context').hidden = !menu;
+  $('#video-discuss').hidden = !menu;
+  $('.video-actions').hidden = !menu;
+  videoDialog.classList.toggle('has-menu', !!menu);
+  updateVideoControls();
+}
+document.addEventListener('click', event => {
+  const link = event.target.closest('a[data-video]');
+  if (!link || event.button || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+  if (!Object.hasOwn(VIDEOS, link.dataset.video)) return;
+  event.preventDefault();
+  videoVersion++;
+  videoSeekTarget = appliedVideoSeek = null;
+  activeVideo = { id: link.dataset.video, menuId: link.dataset.videoMenu };
+  const video = VIDEOS[activeVideo.id];
+  $('#video-error').hidden = true;
+  $('#video-original').href = video.src;
+  videoPlayer.poster = video.poster;
+  $('.video-stage').style.setProperty('--video-poster', `url("${video.poster}")`);
+  videoPlayer.src = window.matchMedia('(max-width: 1000px)').matches ? video.mobileSrc : video.src;
+  updateVideoCopy();
+  openDialog(videoDialog, link);
+  videoPlayer.load();
+  toggleVideo();
+});
+videoPlayer.addEventListener('error', () => {
+  if (videoDialog.open && videoPlayer.hasAttribute('src')) {
+    videoPlayer.pause();
+    videoSeekTarget = appliedVideoSeek = null;
+    videoWaiting(false); $('#video-error').hidden = false; updateVideoControls();
+  }
+});
+videoDialog.addEventListener('close', () => {
+  videoVersion++; videoScrubbing = false; videoSeekTarget = appliedVideoSeek = null;
+  videoPlayer.pause(); videoPlayer.removeAttribute('src'); videoPlayer.removeAttribute('poster'); videoPlayer.load();
+  $('.video-stage').style.removeProperty('--video-poster');
+  videoDialog.classList.remove('is-landscape');
+  videoDialog.style.removeProperty('--source-ratio');
+  $('#video-error').hidden = true; videoWaiting(false); updateVideoControls();
+  activeVideo = null;
+});
+$('#video-discuss').addEventListener('click', event => {
+  const id = activeVideo.menuId;
+  videoPlayer.pause();
+  showMessage(() => composeMenuMessage(id, locale), event.currentTarget, 'quick');
+});
+
 const sticky = $('.mobile-enquire');
 const watched = { hero: true, enquiry: false, contacts: false };
 function updateSticky() {
@@ -484,9 +796,8 @@ if (window.IntersectionObserver) {
 updateWishesCount();
 form.querySelector('[type=submit]').disabled = false;
 $('#form-fallback').hidden = true;
-$('#fallback-nav').hidden = true;
-closeMenu();
-menuToggle.hidden = false;
+menuToggle.setAttribute('aria-expanded', String(mobileMenu.open));
+header.classList.toggle('menu-open', mobileMenu.open);
 
 function applyLanguage(nextLocale) {
   locale = normalizeLocale(nextLocale);
@@ -497,22 +808,18 @@ function applyLanguage(nextLocale) {
   const copy = PAGE_COPY[locale];
   $$('[data-i18n]').forEach(element => { element.textContent = copy[element.dataset.i18n]; });
   $$('[data-menu-amount]').forEach(element => { element.textContent = `${numberFormatter(locale).format(Number(element.dataset.menuAmount))} ₸`; });
+  updateMenuAssets();
   ['placeholder', 'aria-label', 'alt', 'title', 'content'].forEach(attribute => {
     $$(`[data-i18n-${attribute}]`).forEach(element => {
       element.setAttribute(attribute, copy[element.getAttribute(`data-i18n-${attribute}`)]);
     });
   });
   const plannerCopy = getPlannerCopy(locale);
-  const costCopy = getCostCopy(locale);
   $$('#event option').forEach(option => { if (Object.hasOwn(plannerCopy.events, option.value)) option.textContent = plannerCopy.events[option.value]; });
-  [['event', plannerCopy.events], ['help', costCopy.help], ['priorities', costCopy.priorities]].forEach(([name, labels]) => {
-    costForm.querySelectorAll(`input[name="${name}"]`).forEach(input => { input.nextElementSibling.textContent = labels[input.value]; });
-  });
-  menuToggle.setAttribute('aria-label', t(mobileNav.hidden ? 'menuOpen' : 'menuClose'));
+  menuToggle.setAttribute('aria-label', t(mobileMenu.open ? 'menuClose' : 'menuOpen'));
   updateWishesCount();
   costNumber = numberFormatter(locale);
   renderCostText();
-  rangeUpdaters.forEach(update => update());
 
   // Refresh existing errors without validating untouched fields or changing drafts.
   const enquiryErrors = validateEnquiry({ event: $('#event').value, hall: $('#hall').value, date: dateField.value, guests: $('#guests').value, wishes: $('#wishes').value }, undefined, locale);
@@ -523,8 +830,7 @@ function applyLanguage(nextLocale) {
     else clearFieldError(input.id);
   });
   if ($('#form-status').textContent) $('#form-status').textContent = t('checkFields');
-  const costErrors = validateCostStep(6, costData(), undefined, locale);
-  if ($('#cost-date').validity.badInput) costErrors.date = t('badDate');
+  const costErrors = validateBudget(costData(), locale);
   costFields.forEach(name => {
     if (!costForm.querySelector(`[name="${name}"][aria-invalid="true"]`)) return;
     if (costErrors[name]) $(`#cost-${name}-error`).textContent = costErrors[name];
@@ -534,10 +840,13 @@ function applyLanguage(nextLocale) {
   if (messageDialog.open && messageFactory) renderMessage();
   galleryImage.alt = t(`gallery.alt.${galleryIndex}`);
   $('#lightbox-caption').textContent = t(`gallery.caption.${galleryIndex}`);
-  $('#gallery-count').textContent = `${galleryIndex + 1} / ${gallery.length}`;
+  $('#gallery-count').textContent = `${(activeHall === 'main' ? (galleryIndex + 1) % gallery.length : galleryIndex) + 1} / ${gallery.length}`;
   $('#gallery-zoom').textContent = t(galleryZoomed ? 'zoomOut' : 'zoomIn');
   $('#gallery-image-message').textContent = t(galleryState === 'error' ? 'photoError' : 'photoLoading');
   updateMenuViewerCopy();
+  updateVideoCopy();
+  updateThemeControl();
+  updateHallDetail();
 }
 languageSelect.addEventListener('change', () => {
   applyLanguage(languageSelect.value);

@@ -1,0 +1,129 @@
+html[data-layout="halls"] #hall-directory-title { margin: 0; }
+html[data-layout="halls"] .hall-directory-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin-top: 36px; }
+html[data-layout="halls"] .hall-directory-card { position: relative; min-width: 0; border: 1px solid var(--line); border-radius: var(--radius-panel); background: var(--surface); color: var(--ink); }
+html[data-layout="halls"] .hall-card-photo { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 14px; width: 100%; aspect-ratio: 4 / 3; overflow: hidden; border-radius: var(--radius-panel) var(--radius-panel) 0 0; background: var(--parchment); }
+html[data-layout="halls"] .hall-card-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
+html[data-layout="halls"] .hall-photo-placeholder { color: var(--muted); font-size: 16px; border-bottom: 1px solid var(--line); }
+html[data-layout="halls"] .hall-photo-placeholder .icon { width: 36px; height: 36px; stroke-width: 1.2; }
+html[data-layout="halls"] .hall-card-fallback { display: flex; flex-direction: column; align-items: center; gap: 14px; color: var(--muted); font-size: 16px; }
+html[data-layout="halls"] .hall-card-fallback .icon { width: 36px; height: 36px; stroke-width: 1.2; }
+html[data-layout="halls"] .hall-directory-card h3 { margin: 24px 84px 0 24px; font: 400 clamp(28px, 2.6vw, 36px)/1.2 var(--display); overflow-wrap: anywhere; }
+html[data-layout="halls"] .hall-directory-capacity { margin: 12px 84px 26px 24px; color: var(--muted); font: 400 17px/1.5 var(--body); font-variant-numeric: tabular-nums; }
+html[data-layout="halls"] [data-hall-view] { position: absolute; inset: 0; display: block; width: 100%; height: 100%; margin: 0; padding: 0; border: 0; border-radius: inherit; background: transparent; color: var(--action-ink); text-align: left; }
+html[data-layout="halls"] .hall-card-arrow { position: absolute; right: 22px; bottom: 30px; display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--control-border); border-radius: var(--radius-control); }
+html[data-layout="halls"] .hall-card-arrow .icon { width: 20px; height: 20px; }
+html[data-layout="halls"] [data-hall-view]:hover .hall-card-arrow { background: var(--parchment); transform: translateX(2px); }
+html[data-layout="halls"] [data-hall-view]:focus-visible { outline: 2px solid var(--focus); outline-offset: 5px; }
+.gallery-dialog.hall-view .lightbox-top { align-items: start; }
+.gallery-dialog.hall-view #hall-detail-title { margin: 0; font: 400 34px/1.15 var(--display); }
+.gallery-dialog.hall-view #hall-detail-capacity { margin-top: 8px; color: var(--muted); font-size: 15px; }
+.gallery-dialog.hall-view .lightbox-media { position: relative; }
+.gallery-dialog.hall-view .lightbox-stage { display: flex; align-items: center; justify-content: center; min-height: min(42dvh, 420px); border-radius: var(--radius-control); }
+.gallery-dialog.hall-view .lightbox-stage > img { max-height: 58dvh; }
+.gallery-dialog.hall-view .gallery-image-status { width: 100%; }
+.gallery-dialog.hall-view .lightbox-bottom { position: absolute; inset: 0; margin: 0; pointer-events: none; }
+.gallery-dialog.hall-view .lightbox-bottom button { position: absolute; top: 50%; width: 44px; height: 44px; border: 0; border-radius: 50%; background: var(--gold); color: var(--paper); transform: translateY(-50%); pointer-events: auto; }
+.gallery-dialog.hall-view #gallery-prev { left: 12px; }
+.gallery-dialog.hall-view #gallery-next { right: 12px; }
+.gallery-dialog.hall-view #gallery-count { position: absolute; left: 50%; bottom: 8px; padding: 3px 8px; border-radius: var(--radius-control); background: var(--paper); color: var(--ink); transform: translateX(-50%); }
+.gallery-dialog.hall-view .hall-gallery-videos { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px 24px; margin-top: 12px; }
+.gallery-dialog.hall-view .hall-gallery-videos .text-link { min-height: 44px; font-size: 15px; }
+.gallery-dialog.hall-view #hall-detail-visit { max-width: 45ch; margin: 22px auto 0; color: var(--muted); font-size: 16px; text-align: center; }
+.gallery-dialog.hall-view .hall-detail-actions { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 24px; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line); }
+.gallery-dialog.hall-view .hall-detail-actions .text-link { min-height: 44px; font-size: 15px; }
+@media (max-width: 760px) {
+  html[data-layout="halls"] .hall-directory-grid { grid-template-columns: 1fr; gap: 24px; margin-top: 26px; }
+  html[data-layout="halls"] .hall-directory-card h3 { font-size: 30px; }
+  .gallery-dialog.hall-view { width: calc(100% - 24px); padding: 14px; }
+  .gallery-dialog.hall-view #hall-detail-title { font-size: 30px; }
+  .gallery-dialog.hall-view .lightbox-stage { min-height: min(38dvh, 280px); }
+  .gallery-dialog.hall-view .lightbox-stage > img { max-height: 50dvh; }
+  .gallery-dialog.hall-view .hall-detail-actions { flex-direction: column; align-items: stretch; }
+  .gallery-dialog.hall-view .hall-detail-actions .text-link { justify-content: space-between; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  html[data-layout="halls"] .hall-card-arrow { transition: transform 160ms ease, background-color 160ms ease; }
+}
+
+/* The third layout joins directions and footer navigation in one contact area. */
+.contact-instagram-icon { display: none; }
+html[data-layout="halls"] .contacts-grid {
+  grid-template-columns: minmax(160px, .6fr) minmax(280px, 1fr) minmax(0, 1.45fr);
+  grid-template-areas: "navigation contact map";
+  align-items: start;
+  gap: 48px;
+}
+html[data-layout="halls"] .contact-copy { grid-area: contact; min-width: 0; }
+html[data-layout="halls"] .contact-field-label { color: var(--muted); font-size: 15px; }
+html[data-layout="halls"] .contact-address {
+  max-width: none;
+  margin-top: 12px;
+  font: 400 clamp(28px, 2.3vw, 38px)/1.25 var(--display);
+  text-wrap: balance;
+}
+html[data-layout="halls"] #contact-phone-label { margin-top: 32px; }
+html[data-layout="halls"] .contact-phone { margin-top: 8px; font-size: clamp(22px, 2vw, 30px); white-space: nowrap; }
+html[data-layout="halls"] .visit-intro { max-width: 34ch; margin-top: 18px; font-size: 15px; }
+html[data-layout="halls"] .contact-visit { margin-top: 22px; font-size: 15px; padding-inline: 18px; }
+html[data-layout="halls"] .contact-navigation { grid-area: navigation; min-width: 0; }
+html[data-layout="halls"] .contact-navigation nav { display: grid; justify-items: start; }
+html[data-layout="halls"] .contact-navigation nav a { display: flex; align-items: center; min-height: 44px; font-size: 16px; }
+html[data-layout="halls"] .contact-navigation nav a:hover { text-decoration: underline; text-underline-offset: 5px; }
+html[data-layout="halls"] .contact-links { gap: 12px; margin-top: 28px; }
+html[data-layout="halls"] .contact-links a {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--paper);
+}
+html[data-layout="halls"] .contact-links a:hover { background: var(--gold-hover); }
+html[data-layout="halls"] .contact-links a span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+html[data-layout="halls"] .contact-links .icon { width: 25px; height: 25px; }
+html[data-layout="halls"] .contact-instagram-icon { display: block; }
+html[data-layout="halls"] .contact-links a > .icon:last-child { display: none; }
+html[data-layout="halls"] .contact-map { grid-area: map; min-width: 0; }
+html[data-layout="halls"] .contact-map iframe {
+  display: block;
+  width: 100%;
+  height: 340px;
+  border: 0;
+  border-radius: var(--radius-panel);
+  background: #fff;
+  color-scheme: light;
+}
+html[data-layout="halls"] #contact-map-route { margin-top: 12px; }
+html[data-layout="halls"] #contact-map-route .text-link { min-height: 44px; font-size: 15px; }
+html[data-layout="halls"] .site-footer { background: var(--parchment); }
+@media (max-width: 1100px) {
+  html[data-layout="halls"] .contacts-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); grid-template-areas: "contact map" "navigation navigation"; gap: 32px; }
+  html[data-layout="halls"] .contact-navigation nav { grid-template-columns: repeat(4, max-content); gap: 24px; }
+  html[data-layout="halls"] .contact-links { margin-top: 20px; }
+}
+@media (max-width: 760px) {
+  html[data-layout="halls"] .contacts-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "contact" "map" "navigation"; gap: 32px; }
+  html[data-layout="halls"] .contact-address { font-size: 32px; max-width: 24ch; text-wrap: initial; }
+  html[data-layout="halls"] #contact-phone-label { margin-top: 26px; }
+  html[data-layout="halls"] .contact-phone { font-size: 27px; }
+  html[data-layout="halls"] .contact-map iframe { height: 300px; }
+  html[data-layout="halls"] .contact-navigation { padding-top: 24px; border-top: 1px solid var(--line); }
+  html[data-layout="halls"] .contact-navigation nav { grid-template-columns: 1fr 1fr; gap: 0 24px; }
+  html[data-layout="halls"] .contact-links { margin-top: 20px; }
+}
+@media (max-width: 380px) {
+  html[data-layout="halls"] .contact-phone { font-size: 24px; }
+}

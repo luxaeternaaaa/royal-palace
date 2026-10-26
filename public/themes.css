@@ -1,0 +1,85 @@
+html[data-theme="emerald"] {
+  color-scheme: dark;
+  --paper: #064734;
+  --parchment: #0a503d;
+  --surface: #105b45;
+  --champagne: #0a503d;
+  --ink: #f7faf7;
+  --muted: #c4d8cd;
+  --action-ink: #eef5f0;
+  --accent-ink: #c4d8cd;
+  --gold: #ffffff;
+  --gold-hover: #e8f0eb;
+  --gold-light: #ffffff;
+  --control-border: #a0bfaf;
+  --line: #3e7963;
+  --focus: #dbebe1;
+  --error: #ffb8b0;
+  --scroll-thumb: #a0bfaf;
+  --scroll-hover: #c4d8cd;
+  --scroll-active: #f7faf7;
+}
+/* White working surfaces keep dark green reading and focus. */
+html[data-theme="emerald"] .site-header,
+html[data-theme="emerald"] .menu-viewer {
+  color-scheme: light;
+  --paper: #ffffff;
+  --parchment: #eef3ef;
+  --surface: #ffffff;
+  --champagne: #e8f0eb;
+  --ink: #064734;
+  --muted: #4d6c60;
+  --action-ink: #064734;
+  --accent-ink: #064734;
+  --gold: #064734;
+  --gold-hover: #105b45;
+  --line: #d2dfd8;
+  --focus: #064734;
+  --error: #9e372c;
+  --scroll-thumb: #72998a;
+  --scroll-track: var(--parchment);
+  --scroll-hover: #064734;
+  --scroll-active: #064734;
+}
+html[data-theme="emerald"] .brand-logo { filter: url(#brand-background-removal-emerald); }
+html[data-theme="emerald"] .menu-reader-brand img { filter: url(#menu-logo-emerald); }
+html[data-theme="emerald"] :is(.button-gold, .button-primary, .mobile-enquire) { color: #064734; border-color: transparent; }
+html[data-theme="emerald"] .menu-viewer :is(.button-gold, .button-primary) { color: #fff; }
+html[data-theme="emerald"] .button-outline:hover { background: #c4d8cd14; }
+html[data-theme="emerald"] .icon-button:hover { background: var(--champagne); }
+html[data-theme="emerald"] select option { background: var(--surface); color: var(--ink); }
+html[data-theme="emerald"] .site-header .language-select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='m1 1 4 4 4-4' fill='none' stroke='%23064734' stroke-width='1.2'/%3E%3C/svg%3E"); }
+html[data-theme="emerald"] .field input:disabled { background: #234c40; border-color: #72998a; color: #c4d8cd; }
+html[data-theme="emerald"] :is(.hero, .hero-address, .hall-photo > .gallery-label, .video-header, .video-controls, .video-loading, .video-error) { color: #f7faf7; }
+html[data-theme="emerald"] .hero-address:hover { color: #ffffff; }
+html[data-theme="emerald"] .hall-photo.photo-unavailable > .gallery-label { color: var(--action-ink); }
+html[data-theme="emerald"] .menu-cover { background: #fbf9f4; }
+@media (max-width: 1000px) and (orientation: landscape) and (max-height: 500px) {
+  html[data-theme="emerald"] .video-dialog:not(.is-landscape) :is(.video-header, .video-controls) { color: var(--ink); }
+  html[data-theme="emerald"] .video-dialog:not(.is-landscape) .video-error { color: var(--error); }
+}
+@media (forced-colors: active) {
+  html[data-theme="emerald"],
+  html[data-theme="emerald"] .site-header,
+  html[data-theme="emerald"] .menu-viewer {
+    --paper: Canvas;
+    --parchment: Canvas;
+    --surface: Canvas;
+    --champagne: Canvas;
+    --ink: CanvasText;
+    --muted: CanvasText;
+    --action-ink: LinkText;
+    --accent-ink: ButtonText;
+    --gold: ButtonFace;
+    --gold-hover: ButtonFace;
+    --line: ButtonText;
+    --control-border: ButtonText;
+    --focus: Highlight;
+    --scroll-thumb: ButtonText;
+    --scroll-hover: Highlight;
+    --scroll-active: Highlight;
+  }
+  html[data-theme="emerald"] :is(.button-gold, .button-primary, .mobile-enquire, .hero, .hero-address, .hall-photo > .gallery-label, .video-header, .video-controls, .video-loading, .video-error) { color: CanvasText; }
+  html[data-theme="emerald"] .menu-cover { background: Canvas; }
+  html[data-theme="emerald"] .site-header .language-select { background-image: none; }
+}

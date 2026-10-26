@@ -1,8 +1,18 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { MENUS } from '../public/menu-data.mjs';
-import { getMenuSections, getMenuTerms, getMenuNotes } from '../public/menu-locales.mjs';
+import { getMenuSections, getMenuTerms, getMenuNotes, getMenuAsset } from '../public/menu-locales.mjs';
 import { composeMenuMessage, composeQuickMessage, getPlannerCopy, whatsappUrl } from '../public/planner.mjs';
+
+test('localized sheets keep Russian fallback URLs and select matching full images and previews', () => {
+  for (const menu of MENUS) for (const locale of ['ru', 'kk', 'en']) {
+    const folder = locale === 'ru' ? '' : `${locale}/`;
+    assert.equal(getMenuAsset(menu, locale), `/assets/menus/${folder}${menu.id}.webp`);
+    assert.equal(getMenuAsset(menu, locale, 'preview'), `/assets/menus/${folder}${menu.id}-preview.webp`);
+  }
+  assert.equal(getMenuAsset(MENUS[0], 'unknown'), getMenuAsset(MENUS[0], 'ru'));
+  assert.throws(() => getMenuAsset(MENUS[0], 'en', 'unknown'), RangeError);
+});
 
 test('every translated menu retains all dishes and six readable sections', () => {
   for (const menu of MENUS) for (const locale of ['ru', 'kk', 'en']) {
@@ -39,7 +49,7 @@ test('exact menu enquiries retain the chosen offer without inventing a date or b
     const message = composeMenuMessage(menu.id, locale);
     assert.ok(message.includes(getMenuTerms(menu, locale)), `${menu.id}/${locale}`);
     assert.ok(message.includes(new Intl.NumberFormat(locale === 'kk' ? 'ru-RU' : locale === 'en' ? 'en-GB' : 'ru-RU').format(menu.price)));
-    if (menu.hall !== 'memorial') assert.ok(message.includes(getPlannerCopy(locale).halls[menu.hall]));
+    if (menu.hall && menu.hall !== 'memorial') assert.ok(message.includes(getPlannerCopy(locale).halls[menu.hall]));
     assert.doesNotMatch(message, /Дата:|Күні:|Date:|Забронировано|Booked|бронь подтверждена/i);
     assert.equal(new URL(whatsappUrl(message)).searchParams.get('text'), message);
   }

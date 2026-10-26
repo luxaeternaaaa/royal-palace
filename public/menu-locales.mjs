@@ -1,5 +1,6 @@
 // Exact menu translations; the verified Russian source stays in menu-data.mjs.
 import { PAGE_COPY } from './page-locales.mjs';
+import { OCCASION_TRANSLATIONS } from './occasion-menu-locales.mjs';
 
 const translations = new Map([
   ['Рыбное плато', 'Балық ассортиі', 'Fish platter'],
@@ -74,6 +75,7 @@ const translations = new Map([
   ['Запечённый судак с овощной капонатой и соусом из цукини', 'Көкөніс капонатасы және цукини тұздығымен пеште піскен көксерке', 'Baked pike-perch with vegetable caponata and zucchini sauce'],
   ['Лосось на пюре из сельдерея под икорным соусом', 'Балдыркөк езбесі және уылдырық тұздығымен албырт', 'Salmon with celery purée and roe sauce'],
   ['Палтус с муссом из цветной капусты и шпинатом в сливочно-шафрановом соусе', 'Гүлді қырыққабат муссы, шпинат және кілегейлі шафран тұздығымен палтус', 'Halibut with cauliflower mousse, spinach and saffron cream sauce'],
+  ...OCCASION_TRANSLATIONS,
 ].map(([ru, kk, en]) => [ru, { ru, kk, en }]));
 
 const sectionGroups = [
@@ -105,32 +107,38 @@ function translate(text, locale) {
 export function getMenuSections(menu, locale = 'ru') {
   const lang = language(locale);
   const sections = menu.columns.flat();
+  const knownTitles = new Set(sectionGroups.flatMap(group => group.titles));
+  for (const section of sections) if (!knownTitles.has(section.title)) throw new Error(`Unknown menu section: ${section.title}`);
   return sectionGroups.map(group => ({
     title: group[lang],
     items: sections.filter(section => group.titles.includes(section.title)).flatMap(section => section.items.map(item => ({
       name: translate(section.title === 'Второе горячее' ? item.name : item.label ?? item.name, lang),
       detail: translate(item.detail ?? item.ingredients, lang),
     }))),
-  }));
+  })).filter(section => section.items.length);
 }
 
 export function getMenuTerms(menu, locale = 'ru') {
   const lang = language(locale);
-  return [menu.days, menu.guests].filter(Boolean).map(text => {
+  if (menu.id === 'middle-38000') return { ru: 'Условия этого меню уточняются.', kk: 'Бұл мәзірдің шарттары нақтыланады.', en: 'Terms for this menu are to be confirmed.' }[lang];
+  const fragments = [menu.days, menu.guests].filter(Boolean).map(text => {
     if (!terms.has(text)) throw new Error(`Missing menu terms: ${text}`);
     return terms.get(text)[lang];
-  }).join(' · ');
+  });
+  if (menu.serviceTerms) fragments.push(translate(menu.serviceTerms, lang));
+  return fragments.join(' · ');
 }
 
 export function getMenuNotes(menu, locale = 'ru') {
   const lang = language(locale);
+  if (menu.notes) return menu.notes.map(note => translate(note, lang));
   const copy = {
     ru: { meat: 'Мясо для бешбармака предоставляет заказчик.', portions: 'Самса и бореки — по 1 шт. на гостя.', tea: 'Чай — без ограничений.', cranberry: amount => `Клюквенный морс — ${amount}.` },
     kk: { meat: 'Бесбармаққа етті тапсырыс беруші әкеледі.', portions: 'Самса мен бөрек — әр қонаққа 1 данадан.', tea: 'Шай — шектеусіз.', cranberry: amount => `Мүкжидек морсы — ${amount}.` },
     en: { meat: 'Beshbarmak meat is supplied by the customer.', portions: 'Samsa and börek: 1 piece of each per guest.', tea: 'Unlimited tea.', cranberry: amount => `Cranberry fruit drink: ${amount}.` },
   }[lang];
   const items = menu.columns.flat().flatMap(section => section.items);
-  const notes = [copy.meat];
+  const notes = items.some(item => item.ingredients === 'Мясо предоставляет заказчик') ? [copy.meat] : [];
   if (items.some(item => item.ingredients === '1 шт. на гостя')) notes.push(copy.portions);
   if (items.some(item => item.name.startsWith('Чай') && item.ingredients === 'Без ограничений')) notes.push(copy.tea);
   const cranberry = items.find(item => item.name === 'Клюквенный морс');
@@ -138,6 +146,33 @@ export function getMenuNotes(menu, locale = 'ru') {
   return notes;
 }
 
+export function getMenuFooterNotes(menu, locale = 'ru') {
+  const notes = getMenuNotes(menu, locale);
+  const terms = getMenuTerms(menu, locale).split(' · ').filter(term => term && !notes.includes(term));
+  return [...notes, terms.join(' · ')].filter(Boolean);
+}
+
 export function menuHall(hall, locale = 'ru') {
   return PAGE_COPY[language(locale)][hall === 'memorial' ? 'menu.asBeru' : `halls.${hall}`];
+}
+
+export function getMenuKind(menu) {
+  return menu.occasion ?? (menu.hall === 'memorial' ? 'memorial' : 'banquet');
+}
+
+export function getMenuCollection(menu) {
+  return `${getMenuKind(menu)}-${menu.hall ?? 'venue'}`;
+}
+
+export function getMenuTitle(menu, locale = 'ru') {
+  const lang = language(locale);
+  if (menu.occasion === 'graduation') return PAGE_COPY[lang]['menu.graduation'];
+  if (menu.occasion === 'newyear') return `${PAGE_COPY[lang]['menu.newyear']} · ${menuHall(menu.hall, lang)}`;
+  return menuHall(menu.hall, lang);
+}
+
+export function getMenuAsset(menu, locale = 'ru', variant = 'full') {
+  if (!['full', 'preview'].includes(variant)) throw new RangeError(`Unknown menu image variant: ${variant}`);
+  const lang = language(locale);
+  return `/assets/menus/${lang === 'ru' ? '' : `${lang}/`}${menu.id}${variant === 'preview' ? '-preview' : ''}.webp`;
 }

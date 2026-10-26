@@ -83,7 +83,7 @@ test('specific FAQ enquiries ask only the selected questions and retain exact ev
   for (const topic of ['menu', 'guests', 'visit', 'hall']) {
     const message = composeMessage({ ...valid, hall: 'middle', wishes, topics: [topic, topic] });
     assert.match(message, /Событие: Свадьба/);
-    assert.match(message, /Зал: Орта зал \(средний\)/);
+    assert.match(message, /Зал: Средний зал/);
     assert.ok(message.includes(`Пожелания: ${wishes}`));
     assert.doesNotMatch(message, /свободна ли дата|какие условия/);
     if (topic !== 'visit') assert.doesNotMatch(message, /просмотр|приехать|посетить/);
@@ -106,7 +106,7 @@ test('FAQ topics add relevant questions without replacing wishes or repeating a 
   assert.doesNotMatch(message, /undefined|invalid/);
 });
 test('each confirmed hall is carried into the message with an understandable name', () => {
-  for (const [hall, expected] of [['main', 'Основной зал'], ['middle', 'Орта зал (средний)'], ['small', 'Кіші зал (малый)']]) {
+  for (const [hall, expected] of [['main', 'Большой зал'], ['middle', 'Средний зал'], ['small', 'Малый зал']]) {
     assert.deepEqual(validateEnquiry({ ...valid, hall }, today), {});
     assert.ok(composeMessage({ ...valid, hall }).includes(`Зал: ${expected}`));
   }

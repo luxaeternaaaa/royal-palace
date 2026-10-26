@@ -1,10 +1,21 @@
-:root { --paper: #fdfaf3; --ink: #2b2118; --gold: #7a531e; --muted: #6d5b46; --line: #d6c3a1; }
+:root { --paper: #fbf9f4; --ink: #282521; --gold: #8a6a38; --muted: #655f55; --line: #e0dbd1; }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--paper); color: var(--ink); font-family: 'Golos Text', Arial, sans-serif; }
 h1, h2, p, ul { margin: 0; padding: 0; }
-.sheet { width: 1200px; min-height: 1560px; padding: 62px 80px 54px; display: flex; flex-direction: column; }
+.sheet { width: 1200px; min-height: 1560px; padding: 62px 80px 54px; display: flex; flex-direction: column; background: var(--paper); color: var(--ink); }
+/* Source PDF colours back the extracted paper textures and readable type. */
+.sheet[data-hall="main"] { --paper: #155b4b; --ink: #fbf9f4; --gold: #f6e6c1; --muted: #e4ece7; --line: #5e8a76; }
+.sheet[data-hall="middle"] { --paper: #e4dec6; --ink: #282521; --gold: #584222; --muted: #463f34; --line: #c2b79a; }
+.sheet[data-hall="small"] { --paper: #461f1f; --ink: #fbf9f4; --gold: #dec58f; --muted: #e5d2cc; --line: #865d51; }
+.sheet[data-hall="memorial"] { --paper: #103044; --ink: #fbf9f4; --gold: #dcc58f; --muted: #cfdde5; --line: #546e7c; }
+.sheet[data-paper^="newyear"], .sheet[data-paper="graduation"] { --ink: #fbf9f4; --gold: #f6e6c1; --muted: #f1f5ee; --line: #ffffff45; }
+.sheet[data-paper="newyear-main"] { --paper: #671c13; }
+.sheet[data-paper="newyear-middle"] { --paper: #062a6b; }
+.sheet[data-paper="newyear-small"] { --paper: #093d62; }
+.sheet[data-paper="graduation"] { --paper: #155b35; }
 .heading { display: grid; justify-items: center; text-align: center; border-bottom: 1px solid var(--line); padding-bottom: 34px; }
 .heading img { width: 96px; height: 96px; object-fit: contain; filter: url(#brand-gold); }
+.sheet:not([data-paper="middle"]) .heading img { filter: brightness(0) invert(1); }
 h1 { margin-top: 12px; font: 56px/1.15 'Forum', Georgia, serif; }
 .price { margin-top: 23px; font: 500 33px/1.3 'Golos Text', Arial, sans-serif; font-variant-numeric: tabular-nums; }
 .price small { margin-left: 10px; color: var(--muted); font-size: 21px; font-weight: 400; }

@@ -1,4 +1,5 @@
-// Transcribed from the nine supplied menus; source differences are kept per offer.
+// Nine PDF menus; the owner also confirmed the same 38k dishes for the medium hall.
+import { OCCASION_MENUS } from './occasion-menu-data.mjs';
 // Display overrides remove repeated wording while retaining the source recipe.
 const dish = (name, ingredients = '', display = {}) => ({ name, ingredients, ...display });
 const section = (title, items) => ({ title, items });
@@ -53,12 +54,12 @@ const second = {
   halibut: dish('Палтус с муссом из цветной капусты и шпинатом в сливочно-шафрановом соусе', '',
     { label: 'Палтус', detail: 'Мусс из цветной капусты, шпинат, сливочно-шафрановый соус' }),
 };
-const hallNames = { main: 'Основной зал', middle: 'Орта зал', small: 'Кіші зал' };
+const hallNames = { main: 'Большой зал', middle: 'Средний зал', small: 'Малый зал' };
 
 function banquet(id, hall, price, variant, guests, days = '') {
   const cold = [variant === 'classic' ? fish : { ...fish, name: 'Рыбная нарезка' },
     id === 'main-40000' ? { ...meat, name: 'Мясная нарезка' }
-      : id === 'small-38000' ? { ...meat, name: 'Мясная «Казахстан»' } : meat, vegetables];
+      : id.endsWith('-38000') ? { ...meat, name: 'Мясная «Казахстан»' } : meat, vegetables];
   if (variant === 'halibut') cold.push(cheese);
   cold.push(id === 'main-40000' ? dish('Капрезе', 'Мусс из страчателлы с томатами черри') : caprese);
   if (variant === 'salmon') cold.push(dish('Баллотин из куриной грудки', 'С курагой и фисташками'));
@@ -75,7 +76,7 @@ function banquet(id, hall, price, variant, guests, days = '') {
       : [{ title: 'Аренда оборудования', price: hall === 'main' ? 1000000 : 400000, detail: 'Звук, свет, 4 LED-экрана' },
         { title: 'Оформление', price: hall === 'main' ? 500000 : 300000, detail: 'Президиум, фотозона, цветочные композиции' }],
   };
-  if (id === 'small-38000') menu.columns[1][1].items[0] = dish('Самса с мясом и с грибами');
+  if (id.endsWith('-38000')) menu.columns[1][1].items[0] = dish('Самса с мясом и с грибами');
   return menu;
 }
 
@@ -85,6 +86,8 @@ export const MENUS = [
   banquet('main-40000', 'main', 40000, 'halibut', 'До 500 гостей'),
   banquet('middle-27000', 'middle', 27000, 'classic', '84–144 гостя'),
   banquet('middle-32000', 'middle', 32000, 'salmon', '84–144 гостя'),
+  // Composition confirmed on 23 October; no offer-specific guest range was supplied.
+  banquet('middle-38000', 'middle', 38000, 'halibut', ''),
   banquet('small-27000', 'small', 27000, 'classic', '48–60 гостей'),
   banquet('small-32000', 'small', 32000, 'salmon', '48–60 гостей'),
   banquet('small-38000', 'small', 38000, 'halibut', '48–60 гостей'),
@@ -100,4 +103,5 @@ export const MENUS = [
         section('Напитки', [dish('Вода'), dish('Чай с молоком / без молока', '', { label: 'Чай с молоком или без' })])],
     ],
   },
+  ...OCCASION_MENUS,
 ];

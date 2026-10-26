@@ -4,17 +4,18 @@ import { readFile } from 'node:fs/promises';
 import { MENUS } from '../scripts/menu-design/menus.mjs';
 import { PAGE_COPY } from '../public/page-locales.mjs';
 
+const SOURCE_MENUS = MENUS.filter(menu => !menu.occasion);
 const byId = id => MENUS.find(menu => menu.id === id);
 const items = menu => menu.columns.flat().flatMap(category => category.items);
 
-test('the nine menu offers retain their hall, price and source conditions', () => {
-  assert.deepEqual(MENUS.map(({ id, hall, price }) => [id, hall, price]), [
+test('the PDF offers and owner-confirmed medium offer retain their hall, price and source conditions', () => {
+  assert.deepEqual(SOURCE_MENUS.map(({ id, hall, price }) => [id, hall, price]), [
     ['main-30000', 'main', 30000], ['main-35000', 'main', 35000], ['main-40000', 'main', 40000],
-    ['middle-27000', 'middle', 27000], ['middle-32000', 'middle', 32000],
+    ['middle-27000', 'middle', 27000], ['middle-32000', 'middle', 32000], ['middle-38000', 'middle', 38000],
     ['small-27000', 'small', 27000], ['small-32000', 'small', 32000], ['small-38000', 'small', 38000],
     ['as-beru-16000', 'memorial', 16000],
   ]);
-  for (const menu of MENUS) {
+  for (const menu of SOURCE_MENUS) {
     assert.equal(items(menu).find(item => item.name === 'Бешбармак').ingredients, 'Мясо предоставляет заказчик');
     if (menu.hall === 'small') assert.deepEqual(menu.extras.map(extra => extra.price), [200000]);
   }
@@ -29,7 +30,7 @@ test('the nine menu offers retain their hall, price and source conditions', () =
 test('similar packages keep their actual ingredient and quantity differences', () => {
   const find = (id, name) => items(byId(id)).find(item => item.name === name);
   assert.equal(find('main-30000', 'Клюквенный морс').ingredients, '6 л');
-  for (const menu of MENUS.filter(menu => !['main-30000', 'as-beru-16000'].includes(menu.id))) {
+  for (const menu of SOURCE_MENUS.filter(menu => !['main-30000', 'as-beru-16000'].includes(menu.id))) {
     assert.equal(items(menu).find(item => item.name === 'Клюквенный морс').ingredients, '6 л на стол');
   }
   assert.equal(find('main-40000', 'Капрезе').ingredients, 'Мусс из страчателлы с томатами черри');
@@ -41,7 +42,7 @@ test('similar packages keep their actual ingredient and quantity differences', (
 
 test('concise dish labels keep meaningful ingredients, portions and source differences', () => {
   const visible = item => `${item.label ?? item.name} ${item.detail ?? item.ingredients}`;
-  for (const menu of MENUS) {
+  for (const menu of SOURCE_MENUS) {
     const dishes = items(menu);
     assert.match(visible(dishes.find(item => item.name === 'Бешбармак')), /Мясо заказчика/);
     const tea = dishes.find(item => item.name.startsWith('Чай'));
